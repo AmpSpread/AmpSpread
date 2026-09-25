@@ -1,0 +1,33 @@
+AmpSpread v9.7.4 — Third-Party Interfaces
+=========================================
+
+Microsoft Windows
+-----------------
+AmpSpread uses standard Win32, HID, SetupAPI, GDI and file-system APIs supplied
+by Windows. No Microsoft binary is redistributed by AmpSpread.
+
+MSI MPG Ai1600TS / Ai1300TS
+---------------------------
+Live PSU monitoring is implemented through the PSU's USB HID interface. The
+application has a compile-time allowlist containing only these fixed requests:
+
+  FA/51  product identification handshake
+  51/E0  telemetry snapshot
+  51/C1  firmware alarm status
+
+There is no arbitrary HID command editor, firmware updater, threshold writer,
+fan-control command or PSU configuration interface.
+
+Legacy log compatibility
+------------------------
+The offline CSV analyzer recognizes older AmpSpread/HWiNFO/Afterburner-compatible
+column names so historical logs remain readable. AmpSpread v9.7.4 contains no
+live HWiNFO or MSI Afterburner shared-memory polling code.
+
+All product names and trademarks belong to their respective owners. Compatibility
+does not imply sponsorship or endorsement.
+
+Go runtime and standard library
+------------------------------
+The compiled application includes the Go runtime and standard library.
+Their BSD-style license is reproduced in licenses/GO-LICENSE.txt.
