@@ -33,7 +33,7 @@ and recorded events in the Meridian interface.
 
 ## PSU-only monitoring
 
-Version 9.7.4 does **not** load NVML or directly poll NVIDIA GPU telemetry.
+Version 9.7.5 does **not** load NVML or directly poll NVIDIA GPU telemetry.
 Its **GPU connector power** reading is calculated from PSU measurements:
 
 `GPU connector power (W) = sum of six pin currents (A) × measured PSU +12V voltage (V)`
@@ -63,7 +63,7 @@ monitoring applications has not been validated.
 
 ## Saved event history
 
-In v9.7.4, qualified spread archives require an event peak of **0.850 A or
+Since v9.7.4, qualified spread archives require an event peak of **0.850 A or
 higher**. Existing lower-spread archives stay on disk but are hidden from the
 history list. Alarm incidents remain available regardless of spread. This
 history cutoff is separate from the configurable software alarm threshold;
@@ -71,8 +71,8 @@ the live Top 5 and full-session CSV behavior are unchanged.
 
 ## Installation and updates
 
-Download `AmpSpread-v9.7.4-Windows-x64.zip` from the release's **Assets** list,
-extract it, close any older AmpSpread instance and run the included EXE.
+Download `AmpSpread-v9.7.5-Windows-x64.zip` from the release's **Assets** list,
+extract it, close any older AmpSpread instance and run `AmpSpread.exe`.
 Monitoring starts when the app opens. Settings and recordings use
 `%LOCALAPPDATA%\AmpSpread` and are reused when upgrading.
 
@@ -80,15 +80,25 @@ This release is **unsigned**. Windows SmartScreen or Smart App Control may warn
 or block it. Hosting it on GitHub does not remove that restriction or certify
 the application. See [installation notes](docs/INSTALLATION.md).
 
-Updates are currently manual. An in-app release checker, changelog and updater
-are [planned](ROADMAP.md); they are not included in v9.7.4.
+Starting with v9.7.5, choose **Settings / Tools → Check for updates**. Review the
+changelog, then choose **Download update**. AmpSpread keeps monitoring during the
+download. When it is ready, choose **Restart now** to install or **Close** to keep
+using the app and install later. After restarting, the app shows the changelog
+and a link to that release. Checks happen only when requested; there is no
+background polling. Older versions need one manual upgrade to v9.7.5.
+
+Press **Win+R** and enter `%LOCALAPPDATA%\AmpSpread` to see the data, or use
+**Settings / Tools → Open app data folder**. `Spread Replays` holds archived
+spread captures, `Alarm History` holds alarm incidents, and `Sessions` holds
+optional full-session CSVs. Lower-spread archives from earlier versions remain
+in those folders even when hidden in the history list. See [storage details](docs/DATA_AND_UPDATES.md).
 
 ## Before relying on a reading
 
 AmpSpread is a monitoring tool, not a certified hardware protection system.
 Its one-second sampling cannot capture every brief electrical transient.
 Automated tests and static build checks do not replace Windows and connected
-hardware testing. See [validation notes](docs/VALIDATION_v9.7.4.md).
+hardware testing. See [validation notes](docs/VALIDATION_v9.7.5.md).
 
 This repository provides downloads, documentation and an issue tracker. The
 application's Go source is not included in this distribution repository.

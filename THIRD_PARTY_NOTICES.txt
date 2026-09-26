@@ -1,4 +1,4 @@
-AmpSpread v9.7.4 — Third-Party Interfaces
+AmpSpread v9.7.5 — Third-Party Interfaces
 =========================================
 
 Microsoft Windows
@@ -21,7 +21,7 @@ fan-control command or PSU configuration interface.
 Legacy log compatibility
 ------------------------
 The offline CSV analyzer recognizes older AmpSpread/HWiNFO/Afterburner-compatible
-column names so historical logs remain readable. AmpSpread v9.7.4 contains no
+column names so historical logs remain readable. AmpSpread v9.7.5 contains no
 live HWiNFO or MSI Afterburner shared-memory polling code.
 
 All product names and trademarks belong to their respective owners. Compatibility
