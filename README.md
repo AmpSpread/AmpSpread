@@ -2,6 +2,10 @@
 
 # AmpSpread
 
+> **Hardware compatibility: Live monitoring works only with MSI MPG Ai1300TS PCIE5 and MPG Ai1600TS PCIE5 power supplies featuring GPU Safeguard+. The PSU must be connected through its USB telemetry interface. Other PSU models are not supported.**
+>
+> Previously recorded AmpSpread logs can still be analyzed offline without a connected PSU.
+
 **See how current is shared across your six 12V-2x6 power pins.**
 
 AmpSpread is a compact Windows monitoring application for compatible MSI power
