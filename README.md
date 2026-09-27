@@ -32,20 +32,23 @@ and recorded events in the Meridian interface.
 - Configure software thresholds, hysteresis, capture windows, consecutive samples,
   sound and optional CSV recording.
 
-## PSU-only monitoring
+## GPU power source
 
-Version 9.7.6 does **not** load NVML or directly poll NVIDIA GPU telemetry.
-Its **GPU connector power** reading is calculated from PSU measurements:
+**PSU connector power is the default.** It uses only PSU measurements:
 
 `GPU connector power (W) = sum of six pin currents (A) × measured PSU +12V voltage (V)`
 
-This is power through the monitored connector, **not total GPU board power**.
-It excludes motherboard PCIe slot power and does not separately measure cable
-voltage drop. Total PSU output is displayed separately.
+This measures the monitored connector, excluding motherboard PCIe slot power. PSU-side voltage does not separately measure cable voltage drop. Total PSU output stays separate.
 
-Live telemetry uses the PSU's USB HID interface. The app has no PSU fan,
-voltage, firmware-update or hardware-limit controls. Configurable alarm limits
-are software monitoring limits.
+To show the NVIDIA driver's **whole-board power**, open **Settings / Tools**, enable **Use NVIDIA board power (off: PSU connector)**, then **Save Settings**. The live headline changes to **GPU BOARD**. Connector watts remain in the power panel and recordings. The two measurements have independent peaks and labels; missing NVIDIA readings show unavailable. A valid zero remains zero.
+
+The optional reader uses only NVIDIA's documented NVML board-power query, in a separate process at below-normal priority. It makes one query at most every two seconds, waits after completion and never catches up missed polls. It requires exactly one NVIDIA GPU and Windows' signed System32 `nvml.dll`; older non-DCH layouts and unsupported power queries stop with an unavailable status. Nothing is installed or downloaded for the driver.
+
+Errors, invalid values, a response slower than 250 ms, a one-second request timeout or an eight-second startup timeout stop the reader. No automatic retry occurs while enabled; switch off, save, then on and save to try again after the old reader has fully exited. Readings expire after five seconds. A hung native call may leave the small helper process alive until it returns; a named mutex prevents another reader from attaching. The app never forcibly terminates a driver call or unloads the DLL from another thread. These precautions cannot contain a kernel-driver fault or prove freedom from driver conflicts.
+
+There are no GPU temperature, generic field, clock, voltage, fan or power-limit queries/controls, no private NVAPI calls and no game hooks. PSU mode does not load NVML. NVIDIA describes board-power values on Ampere (except GA100) and newer GPUs as a one-second average; this is not a transient power measurement. [NVIDIA reference](https://docs.nvidia.com/deploy/nvml-api/api/group__nvmlDeviceQueries.html)
+
+Live PSU telemetry uses USB HID. The app has no PSU fan, voltage, firmware-update or hardware-limit controls. Configurable alarm limits are software monitoring limits.
 
 ## Compatibility
 
@@ -55,12 +58,16 @@ are software monitoring limits.
 | PSU support in code | MSI MPG Ai1600TS and Ai1300TS USB HID interfaces |
 | Live connection | Compatible PSU connected through its USB telemetry interface |
 | Offline analysis | Completed supported AmpSpread CSV log; no PSU connection required |
-| GPU vendor software | No NVIDIA telemetry library required |
+| GPU vendor software | None needed in PSU mode; optional NVIDIA power requires signed System32 NVML and exactly one NVIDIA GPU |
 
 Ai1600TS operation has been reported by the developer during development.
 Ai1300TS detection is implemented but has not been hardware-validated in this
 release's build environment. Simultaneous access to the same PSU by other
 monitoring applications has not been validated.
+
+## Resource use
+
+PSU sampling remains once per second. Minimized windows avoid live redraws and graph copies and pause replay playback. NVIDIA polling is optional and slower than PSU sampling. The five replay buffers remain bounded. See [measured scope and performance guidance](docs/PERFORMANCE.md); zero gaming impact and HWiNFO64 equivalence have not been established.
 
 ## Live Top 5 replays
 
@@ -86,7 +93,7 @@ live Top 5 qualification and full-session CSV behavior are unchanged.
 
 ## Installation and updates
 
-Download `AmpSpread-v9.7.6-Windows-x64.zip` from the release's **Assets** list,
+Download `AmpSpread-v9.7.7-Windows-x64.zip` from the release's **Assets** list,
 extract it, close any older AmpSpread instance and run `AmpSpread.exe`.
 Monitoring starts when the app opens. Settings and recordings use
 `%LOCALAPPDATA%\AmpSpread` and are reused when upgrading.
@@ -102,6 +109,8 @@ using the app and install later. After restarting, the app shows the changelog
 and a link to that release. Checks happen only when requested; there is no
 background polling. Versions before v9.7.5 need one manual upgrade to the current release.
 
+From v9.7.7, Restart now checks Windows launch in the background before stopping monitoring. A blocked check leaves the current app open. This does not grant Windows trust or guarantee permission at the final install path; rollback still applies. Older updaters cannot receive this safeguard until upgraded. See [Application Control guidance](docs/INSTALLATION.md#windows-security-messages).
+
 Press **Win+R** and enter `%LOCALAPPDATA%\AmpSpread` to see the data, or use
 **Settings / Tools → Open app data folder**. `Spread Replays` holds archived
 spread captures, `Alarm History` holds alarm incidents, and `Sessions` holds
@@ -113,7 +122,7 @@ in those folders even when hidden in the history list. See [storage details](doc
 AmpSpread is a monitoring tool, not a certified hardware protection system.
 Its one-second sampling cannot capture every brief electrical transient.
 Automated tests and static build checks do not replace Windows and connected
-hardware testing. See [validation notes](docs/VALIDATION_v9.7.6.md).
+hardware testing. See [validation notes](docs/VALIDATION_v9.7.7.md).
 
 This repository provides downloads, documentation and an issue tracker. The
 application's Go source is not included in this distribution repository.

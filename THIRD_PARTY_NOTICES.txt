@@ -1,4 +1,4 @@
-AmpSpread v9.7.6 — Third-Party Interfaces
+AmpSpread v9.7.7 — Third-Party Interfaces
 =========================================
 
 Microsoft Windows
@@ -21,7 +21,7 @@ fan-control command or PSU configuration interface.
 Legacy log compatibility
 ------------------------
 The offline CSV analyzer recognizes older AmpSpread/HWiNFO/Afterburner-compatible
-column names so historical logs remain readable. AmpSpread v9.7.6 contains no
+column names so historical logs remain readable. AmpSpread v9.7.7 contains no
 live HWiNFO or MSI Afterburner shared-memory polling code.
 
 All product names and trademarks belong to their respective owners. Compatibility
@@ -31,3 +31,12 @@ Go runtime and standard library
 ------------------------------
 The compiled application includes the Go runtime and standard library.
 Their BSD-style license is reproduced in licenses/GO-LICENSE.txt.
+
+NVIDIA NVML (optional)
+----------------------
+The optional board-power reader dynamically uses the installed, signed Windows
+System32 nvml.dll. No NVIDIA binary, SDK header or third-party binding is
+redistributed. The resolved entry points are nvmlInit_v2, nvmlShutdown,
+nvmlDeviceGetCount_v2, nvmlDeviceGetHandleByIndex_v2 and nvmlDeviceGetPowerUsage.
+Reference: https://docs.nvidia.com/deploy/nvml-api/nvml-api-reference.html
+NVIDIA is a trademark of NVIDIA Corporation; compatibility does not imply endorsement.

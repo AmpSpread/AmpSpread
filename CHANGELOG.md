@@ -1,5 +1,17 @@
 # Changelog
 
+## 9.7.7 — Optional NVIDIA power and update launch checks
+
+- Added **Settings / Tools → Use NVIDIA board power (off: PSU connector)**. Choose it and press **Save Settings**. It is off in new and existing configurations unless explicitly enabled.
+- PSU mode calculates connector watts from six pin currents × measured PSU supply voltage. NVIDIA mode shows whole-board power from the installed NVIDIA driver. Connector and board readings, peaks, recordings and replay labels stay separate.
+- The optional reader runs in a separate, below-normal-priority process, querying only board power at most once every two seconds after each completed read. It requires exactly one NVIDIA GPU and a signed `nvml.dll` in Windows System32.
+- Driver errors, invalid values, responses over 250 ms and timeouts stop polling. There is no automatic retry while that reader remains enabled. Readings expire after five seconds. A stuck native call blocks another reader from attaching; AmpSpread does not terminate the call, unload its library concurrently, reset the GPU or change driver settings.
+- Minimized windows skip live redraws and graph copies; replay playback pauses. Existing one-second PSU sampling and bounded Top 5 replay storage remain.
+- Added an asynchronous, hardware-free update launch check **before closing the current app**. Policy/signature blocks receive a clear message and diagnostic log. Replacement and rollback remain behind a successful check and helper readiness.
+- Closing the app during update preparation aborts installation. Downloads still keep the app running; **Close** on the update page returns to the app, while **Restart now** requests installation.
+
+This release remains unsigned. Windows policy blocks still require a trusted publisher/build. Launch preflight applies to updates initiated from v9.7.7 onward. Native Windows hardware and gaming performance are not validated.
+
 ## 9.7.6 — Every live Top 5 event is replayable
 
 - Every event currently listed in the live **Top 5** has a viewable replay, including peaks below 0.850 A and zero-spread events that qualify.
