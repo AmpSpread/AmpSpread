@@ -1,5 +1,14 @@
 # Changelog
 
+## 9.7.6 — Every live Top 5 event is replayable
+
+- Every event currently listed in the live **Top 5** has a viewable replay, including peaks below 0.850 A and zero-spread events that qualify.
+- A dedicated in-memory cache keeps those replays available after the short rolling buffer expires.
+- When a larger event replaces a Top 5 entry, its temporary replay samples are released. If that replay is open, the app returns to Live and clears the view's copy.
+- The cache holds at most five captures, each bounded to 600 samples. Long captures retain start, peak and recent windows; omitted sections are identified in replay.
+- Leaving a temporary replay clears its view copy. Resetting or starting a new session clears all five cached replays.
+- The separate saved-history cutoff remains **0.850 A**. Alarm incidents and existing saved recordings are preserved; this change does not delete files from disk.
+
 ## 9.7.5 — In-app updates and data folder access
 
 - Added **Settings / Tools → Check for updates** using the public AmpSpread GitHub Releases API. Checks happen only when requested.

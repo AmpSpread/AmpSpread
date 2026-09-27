@@ -32,6 +32,25 @@ optional and is off by default.
 PNG reports and summary CSV exports go to the location selected in the Save
 dialog; the suggested folder is beside the source CSV.
 
+## Temporary live Top 5 replays
+
+Starting with v9.7.6, every listed live Top 5 event has replay samples held in
+app memory, including peaks below 0.850 A. This cache does not write additional
+replay files. It retains at most five events, up to 600 samples per event.
+Long captures retain start, peak and recent windows and identify omitted samples.
+
+When a larger event replaces an entry, the app releases that entry's replay
+sample buffer. If its replay is open, the view also clears and returns to Live.
+Leaving a temporary replay clears its view copy. A reset or new session clears
+the cache. Released memory becomes available to Go's memory manager for reuse;
+Windows Task Manager need not show an immediate decrease in the process total.
+
+The normal shared alarm ring and live graph still retain their own bounded
+recent measurements. A replaced Top 5 replay cannot be reopened from those
+buffers. Separately saved spread archives (peaks at least 0.850 A), alarm
+incidents and optional session CSVs follow their existing disk retention rules.
+Replacing a live Top 5 replay does not erase those saved recordings.
+
 ## Update files and backups
 
 Updates download into the `Updates` folder while the application keeps running.

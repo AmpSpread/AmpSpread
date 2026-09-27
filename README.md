@@ -19,7 +19,8 @@ and recorded events in the Meridian interface.
 ## What it does
 
 - Monitor all six connector pin currents, total current and current/average/maximum spread.
-- Keep the top five qualified spread events in a compact horizontal strip.
+- Keep the top five qualified spread events in a compact horizontal strip; click
+  any listed event to replay it, regardless of spread.
 - Switch between current bars and a timeline, and between normal and compact layouts.
 - View PSU output, measured voltage and voltage statistics, efficiency, rail currents,
   temperature, fan speed and firmware alarm status.
@@ -33,7 +34,7 @@ and recorded events in the Meridian interface.
 
 ## PSU-only monitoring
 
-Version 9.7.5 does **not** load NVML or directly poll NVIDIA GPU telemetry.
+Version 9.7.6 does **not** load NVML or directly poll NVIDIA GPU telemetry.
 Its **GPU connector power** reading is calculated from PSU measurements:
 
 `GPU connector power (W) = sum of six pin currents (A) × measured PSU +12V voltage (V)`
@@ -61,17 +62,31 @@ Ai1300TS detection is implemented but has not been hardware-validated in this
 release's build environment. Simultaneous access to the same PSU by other
 monitoring applications has not been validated.
 
+## Live Top 5 replays
+
+Every event listed in the live Top 5 is replayable, including events below
+0.850 A. Click an event's box to open it. Its samples stay available in a bounded
+memory cache while that event remains in the Top 5. A larger replacement releases
+the old replay; if it is open, the app returns to Live and clears that view too.
+Resetting or starting a new session also clears the cache.
+
+The cache holds at most five captures with at most 600 samples each. Long events
+keep start, peak and recent windows, with omitted sections identified in replay.
+The existing event qualification rules still apply: peaks of at least 1 A qualify
+immediately; smaller peaks must sustain the existing three-second duration rule.
+These temporary replays are separate from saved event history below.
+
 ## Saved event history
 
 Since v9.7.4, qualified spread archives require an event peak of **0.850 A or
 higher**. Existing lower-spread archives stay on disk but are hidden from the
 history list. Alarm incidents remain available regardless of spread. This
 history cutoff is separate from the configurable software alarm threshold;
-the live Top 5 and full-session CSV behavior are unchanged.
+live Top 5 qualification and full-session CSV behavior are unchanged.
 
 ## Installation and updates
 
-Download `AmpSpread-v9.7.5-Windows-x64.zip` from the release's **Assets** list,
+Download `AmpSpread-v9.7.6-Windows-x64.zip` from the release's **Assets** list,
 extract it, close any older AmpSpread instance and run `AmpSpread.exe`.
 Monitoring starts when the app opens. Settings and recordings use
 `%LOCALAPPDATA%\AmpSpread` and are reused when upgrading.
@@ -85,7 +100,7 @@ changelog, then choose **Download update**. AmpSpread keeps monitoring during th
 download. When it is ready, choose **Restart now** to install or **Close** to keep
 using the app and install later. After restarting, the app shows the changelog
 and a link to that release. Checks happen only when requested; there is no
-background polling. Older versions need one manual upgrade to v9.7.5.
+background polling. Versions before v9.7.5 need one manual upgrade to the current release.
 
 Press **Win+R** and enter `%LOCALAPPDATA%\AmpSpread` to see the data, or use
 **Settings / Tools → Open app data folder**. `Spread Replays` holds archived
@@ -98,7 +113,7 @@ in those folders even when hidden in the history list. See [storage details](doc
 AmpSpread is a monitoring tool, not a certified hardware protection system.
 Its one-second sampling cannot capture every brief electrical transient.
 Automated tests and static build checks do not replace Windows and connected
-hardware testing. See [validation notes](docs/VALIDATION_v9.7.5.md).
+hardware testing. See [validation notes](docs/VALIDATION_v9.7.6.md).
 
 This repository provides downloads, documentation and an issue tracker. The
 application's Go source is not included in this distribution repository.
