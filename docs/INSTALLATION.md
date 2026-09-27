@@ -1,7 +1,7 @@
 # Install or update AmpSpread
 
 1. Open the project's Releases page and expand **Assets**.
-2. Download **AmpSpread-v9.7.5-Windows-x64.zip**. GitHub's automatic **Source code**
+2. Download **AmpSpread-v9.7.6-Windows-x64.zip**. GitHub's automatic **Source code**
    ZIP contains this documentation repository, not the runnable application.
 3. Extract the ZIP into a folder you can write to.
 4. Close any older AmpSpread window, then run **AmpSpread.exe**.
@@ -46,7 +46,7 @@ folder if you want an independent copy of your settings and recordings.
 Each release includes `SHA256SUMS.txt`. In PowerShell, run:
 
 ```powershell
-Get-FileHash .\AmpSpread-v9.7.5-Windows-x64.zip -Algorithm SHA256
+Get-FileHash .\AmpSpread-v9.7.6-Windows-x64.zip -Algorithm SHA256
 ```
 
 Compare the result with the release's checksum file. The EXE checksum is also
@@ -55,7 +55,7 @@ published copy; it is not a publisher identity certificate or a safety verdict.
 
 ## Windows security messages
 
-v9.7.5 is not Authenticode-signed. SmartScreen reputation warnings and Smart App
+v9.7.6 is not Authenticode-signed. SmartScreen reputation warnings and Smart App
 Control blocks are different Windows protections. A legitimate unsigned app
 can still be blocked, and a GitHub download does not bypass either system.
 If Windows blocks this build, it may not be usable under your current policy.
