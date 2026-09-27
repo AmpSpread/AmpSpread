@@ -17,6 +17,7 @@ LOCALAPPDATA environment variable is unavailable.
 | `Updates\stage-*` | Downloaded executable, release notes and install plan; a helper copy is added when Restart now is chosen |
 | `Updates\pending.json` | Points to the downloaded update waiting for your restart choice |
 | `Updates\update_errors.log` | Update diagnostics, if an update fails |
+| `nvidia_power_errors.log` | Optional NVIDIA reader failures; bounded rotation adds `.1` |
 
 Older versions can have recordings in `%LOCALAPPDATA%\AmpSpread\v9.5` or `v8.7`;
 legacy history lookup also supports the earlier
@@ -78,3 +79,9 @@ No automatic startup checks, private GitHub token, analytics or telemetry upload
 are part of the updater. SHA-256 detects corruption relative to the GitHub asset;
 it is not a substitute for publisher signing or protection against a compromised
 publishing account. This release remains unsigned.
+
+## Optional NVIDIA power data
+
+The setting is stored as `nvidia_power_enabled` in `config.json`, false by default. Enabling it does not create a separate continuous driver log. Current readings are held in memory and copied into the existing sample/recording paths. Full-session and incident CSVs add `NVIDIA Board Power W` and `NVIDIA Power Sample Unix ms`; PSU mode leaves those fields blank. Replays keep the separate reading, validity and timestamp. Old GPU fields remain legacy data. One board-power reading can appear in several one-second PSU rows, with its original acquisition timestamp.
+
+Driver faults are recorded in `nvidia_power_errors.log`; diagnostic logs rotate at their existing bounded size. Nothing is uploaded to NVIDIA or GitHub by this reader.

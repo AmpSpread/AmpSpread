@@ -1,5 +1,9 @@
 # Roadmap
 
+## Shipped in v9.7.7
+
+Opt-in isolated NVIDIA board-power reads, minimized redraw/playback suppression, source-separated recordings and asynchronous updater launch preflight. Windows trust blocks remain subject to publisher signing and local policy.
+
 ## Shipped in v9.7.6
 
 Every listed live Top 5 event has a bounded in-memory replay, at any spread.

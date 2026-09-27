@@ -1,13 +1,13 @@
 # Install or update AmpSpread
 
 1. Open the project's Releases page and expand **Assets**.
-2. Download **AmpSpread-v9.7.6-Windows-x64.zip**. GitHub's automatic **Source code**
+2. Download **AmpSpread-v9.7.7-Windows-x64.zip**. GitHub's automatic **Source code**
    ZIP contains this documentation repository, not the runnable application.
 3. Extract the ZIP into a folder you can write to.
 4. Close any older AmpSpread window, then run **AmpSpread.exe**.
 
 The build is for Windows x64. No installer, NVIDIA library or bundled kernel
-driver is included. Live measurements require a compatible PSU's USB telemetry
+driver is included. Optional NVIDIA board power uses the signed driver library already installed in Windows System32. Live measurements require a compatible PSU's USB telemetry
 connection. Monitoring starts automatically when the application opens.
 
 ## In-app updates (v9.7.5 onward)
@@ -19,7 +19,7 @@ monitoring continues while the ZIP downloads and its SHA-256 checksum is checked
 At **Update ready to install**, choose **Restart now** or **Close**. Close only
 closes the update screen and keeps this version running. The staged update is
 remembered across ordinary exits and can be installed later. Restart now flushes
-recordings, exits normally, installs the verified EXE and opens the new version.
+recordings, exits normally, installs the verified EXE and opens the new version. From v9.7.7, an asynchronous hardware-free launch probe and helper readiness check run first while monitoring continues. A failed probe leaves the running app and installed EXE intact.
 The updated app displays the release notes and **View release on GitHub**.
 
 No update installs automatically on a normal exit. No GitHub login or private
@@ -46,7 +46,7 @@ folder if you want an independent copy of your settings and recordings.
 Each release includes `SHA256SUMS.txt`. In PowerShell, run:
 
 ```powershell
-Get-FileHash .\AmpSpread-v9.7.6-Windows-x64.zip -Algorithm SHA256
+Get-FileHash .\AmpSpread-v9.7.7-Windows-x64.zip -Algorithm SHA256
 ```
 
 Compare the result with the release's checksum file. The EXE checksum is also
@@ -55,11 +55,15 @@ published copy; it is not a publisher identity certificate or a safety verdict.
 
 ## Windows security messages
 
-v9.7.6 is not Authenticode-signed. SmartScreen reputation warnings and Smart App
+v9.7.7 is not Authenticode-signed. SmartScreen reputation warnings and Smart App
 Control blocks are different Windows protections. A legitimate unsigned app
 can still be blocked, and a GitHub download does not bypass either system.
 If Windows blocks this build, it may not be usable under your current policy.
 There is no compatibility setting in AmpSpread that makes it trusted.
+
+If the message says **“An Application Control policy has blocked this file”**, this is a Windows launch-policy decision, not a failed network download. The updater keeps/restores the previous EXE when it can confirm launch failure. The current build remains unsigned; trusted publisher signing is the distribution fix, subject to your Windows policy. Manual extraction or downloading again does not grant trust.
+
+The new preflight is implemented in v9.7.7. It cannot change the updater already running in v9.7.5/v9.7.6 for the first upgrade. Even a successful probe cannot guarantee a subsequent launch at a different installation path. No security policy, antivirus exclusion or elevation is changed by AmpSpread. Detailed failures go to `%LOCALAPPDATA%\AmpSpread\Updates\update_errors.log`.
 
 When reporting a block, include the exact message, AmpSpread version and Windows
 version. Remove personal details from screenshots. Do not post security
@@ -77,5 +81,5 @@ and [Smart App Control](https://learn.microsoft.com/en-us/windows/apps/develop/s
   vendor's total board-power reading.
 - A saved replay's selected sample may be below 0.850 A; the history cutoff
   applies to the event's peak, not every captured sample.
-- Native Windows and hardware validation remain necessary. Removing direct
-  NVIDIA telemetry has not established the cause of earlier display flicker.
+- For the fewest GPU interactions, leave the NVIDIA option off. Opting in adds driver calls; process isolation cannot guarantee no display flicker or game impact.
+- Native Windows and hardware validation remain necessary; see the validation and performance notes.
