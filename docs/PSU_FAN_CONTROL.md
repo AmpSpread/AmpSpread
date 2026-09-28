@@ -1,32 +1,54 @@
-# PSU fan control preview — v9.7.8
+# PSU fan control — v9.8.2
 
-**Only MSI MPG Ai1300TS PCIE5 and MPG Ai1600TS PCIE5 with GPU Safeguard+ are supported.** Connect the PSU's USB cable. MSI Center is not required.
+**Only MSI MPG Ai1600TS PCIE5 and MPG Ai1300TS PCIE5 with GPU Safeguard+ and a USB connection are supported.** MSI Center is not required. This is a hardware-validation prerelease, not a certified protection system.
 
-This is a preview. Code and simulated failures have been tested; actual fan response, firmware overrides, crash behavior and coexistence with other Windows hardware tools have not been tested on a physical PSU here. v9.7.7 remains the latest stable release; the normal updater skips prereleases.
+| Control | Ai1600TS | Ai1300TS |
+|---|---|---|
+| Live measured RPM | Yes | Yes |
+| Session Auto / Customized target | Yes | Yes |
+| Session Zero Fan, only in Auto | Yes | Yes |
+| Restore automatic, without permanent save | Yes | Yes |
+| Explicit save in PSU | Captured USB revision `0DB0:808C`, bcdDevice `0200` only | Disabled pending model-specific persistence evidence |
+
+The supplied Ai1600TS captures establish the observed write/commit behavior, including successful FC and rejected/other FE replies. They do not physically validate this new executable, every target, thermal override, AC power loss, driver hangs or other firmware revisions. Ai1300TS session commands use the existing TS SDK protocol support; they have not been physically validated in this build environment. Other Ai1600TS revisions retain session control rather than assuming permanent-write compatibility.
 
 ## Use
 
-1. Start monitoring, open **Settings / Tools**, then scroll to **PSU fan**.
-2. The live counter uses the existing PSU RPM reading. A stopped fan shows **0 RPM**; missing or expired telemetry, or stopped monitoring, shows **unavailable**.
-3. Enter a whole-number target from **30 to 100**, then enable **Manual static PSU fan speed**. The initial target is 50%. The lower bound is AmpSpread policy, not a claimed MSI minimum.
-4. To change 30% to 50%, enter **50** and press **Apply speed**. The status reports confirmed settings; the separate measured RPM counter shows physical fan response. Percent and RPM are different measurements.
-5. Uncheck manual control or press **Restore automatic** to release AmpSpread's control. Fan changes apply separately from **Save Settings**.
+1. Start monitoring, open Settings / Tools, and scroll to PSU fan.
+2. Leave **Save in PSU after closing** unchecked for session control. It starts unchecked and is not saved in app preferences.
+3. Select a target, then Customized. While Customized is active, releasing the slider commits the selected target. Mouse movement and keyboard repeats do not perform a write on every movement. The separate RPM counter displays measured response.
+4. **Auto** returns to Auto with Zero Fan OFF. **Zero Fan** can be toggled only with a fresh, confirmed Auto state.
+5. On the validated Ai1600TS revision, explicitly check **Save in PSU after closing** before selecting Auto/Customized or changing Zero Fan. The Auto button becomes **Save Auto**. A saved manual setting remains after AmpSpread closes. To change a running session-only manual setting to persistent operation, first Restore automatic.
+6. **Restore automatic** is a separate recovery action: it sets temporary Auto and Zero Fan OFF, sends no F1, and does not require fresh telemetry. It remains available during faults or unreadable recovery records, but still requires the same connected PSU and usable USB coordination.
 
-Manual mode lasts for this monitoring session and is never enabled automatically after restart. AmpSpread temporarily disables zero-fan mode for manual operation and restores the previous zero-fan preference with automatic mode. It does not send the PSU's permanent save-settings command. If the PSU already has manual control from another program, first restore automatic mode through that program. AmpSpread refuses to take over an external manual setting.
+The target range is **30–100 raw control units**. These values are not calibrated percentages of RPM, PWM duty, or MSI slider travel. The floor is conservative application policy, not a manufacturer's minimum or an all-load safety guarantee. Values `0D`, `2B` and `4D` were observed in MSI captures; the UI does not invent a percentage conversion. The application does not offer fan curves, case-fan control, GPU-fan control, PSU voltage or protection-limit writes.
 
-## Safeguards and recovery
+## Saving and recovery
 
-- Only the existing PSU worker sends fan requests through its existing USB handle. The UI does not call hardware. No case-fan, motherboard, GPU-fan, firmware, voltage, protection-limit or power-limit controls are added.
-- Every fan payload is validated. Only mode/duty reads, automatic/manual mode and the zero-fan switch are permitted. Fan operations require the MSI coordination mutex; access errors stop control without requesting elevation. Software that ignores this mutex can still interfere. Avoid running another controller for the same PSU.
-- Changes require fresh, alarm-free PSU telemetry and confirmed readback. The selected target is not rewritten on every sample.
-- Manual mode adds two fan-setting reads to each normal monitoring cycle. If reported calculated cooling demand exceeds the manual target, AmpSpread attempts to return to automatic mode. This software check does not replace hardware thermal protection.
-- Missing/stale/invalid telemetry, firmware alarm or unknown status, changed settings, failed readback, or zero RPM after ten seconds trigger the same restoration attempt. A fault latches manual mode off until **Restore automatic** explicitly resets it. A queued manual change cannot bypass a new fault.
-- Before the first write, `%LOCALAPPDATA%\AmpSpread\psu_fan_recovery.json` stores a hashed device identity and the prior zero-fan preference. It contains no recordings. It is removed only after automatic mode and the prior zero-fan preference are confirmed. Do not delete it while recovery is pending. An unreadable record blocks manual control and is preserved.
-- Recovery only targets the same PSU. Restarting monitoring or reconnecting it permits another attempt. Retries while connected occur at most every 30 seconds; **Restore automatic** requests an immediate attempt. A failed restore keeps the record.
-- Normal stop/exit attempts restoration. Ordinary close and update restart are blocked if restoration remains unconfirmed; reconnect the same PSU, start monitoring and restore automatic mode first. Automatic mode is confirmed before zero-fan is re-enabled.
+- All writes require MSI's cross-process coordination mutex. Access denied, failure to establish coordination or timeout blocks the operation; there is no process-local fallback for fan control and no elevation request. Close other PSU controllers and their background components before using these controls. Programs that ignore MSI's mutex can still interfere.
+- A single existing USB worker owns reads and writes. A transaction keeps coordination across preconditions, write echoes, intermediate readbacks, separate F1 commits and final readback. The register allowlist is 41/43/F1 for fan writes and 41/42 for fan reads.
+- Both F1 responses must be FC. FE, missing or malformed replies fail the operation. Ordinary polling can report current device state but cannot promote an uncertain save to confirmed.
+- Before a persistent mutation, a synced, device-bound unfinished-save record is created. If a partial save fails, AmpSpread attempts **temporary** Auto/OFF and keeps the record. Reconnect/startup recovery does not repeat a persistent write.
+- If the status reports an unfinished save, press Restore automatic; on the validated revision, enable Save in PSU and press Save Auto to explicitly resolve permanent state. Ordinary close/update restart remains blocked while restoration is pending. Do not delete recovery records to suppress the warning.
+- Session manual control retains a separate recovery record and attempts to restore Auto plus the original Zero Fan preference on Stop/normal exit. Recovery records bind to a hashed PSU identity. A queued action cannot follow a replacement PSU.
+- A saved manual profile records only the user's last acknowledged manual target/device. It resumes monitoring safeguards after reopening AmpSpread; it never reapplies manual control or sends F1 at startup. Changed/faulted/stale telemetry, excess calculated demand or zero RPM after the grace period cause temporary Auto recovery and require explicit resolution of permanent state.
+- Session and saved manual guards run while monitoring, even outside Settings. They cannot run while the application/PC is off. A crash, disconnected cable or hung driver can prevent recovery. No firmware watchdog or guaranteed thermal override is claimed. Use Auto for unattended operation until the hardware behavior is validated.
 
-**Forced termination, an OS crash, hung USB I/O or an unplugged USB cable can prevent restoration. Manual settings may remain active until the PSU can be reached again. No firmware watchdog is guaranteed.** Keep automatic mode for unattended use until the preview has been validated on the hardware. For an initial check, use an idle PC and confirm 30% → 50% → automatic and the live RPM response before relying on this while gaming.
+## Files written on the PC
+
+All records are under `%LOCALAPPDATA%\AmpSpread` (use Settings / Tools → Open app data folder):
+
+| File | Purpose |
+|---|---|
+| `psu_fan_recovery.json` | Session-only recovery: hashed device identity and prior Zero Fan preference |
+| `psu_fan_recovery.json.save` | Unfinished/uncertain persistent operation; retained until explicit confirmed Save Auto resolves it |
+| `psu_fan_recovery.json.approved` | Last acknowledged manual target/device; used only to resume monitoring safeguards |
+| `*.invalid-<timestamp>` | Preserved unreadable recovery records, quarantined only after an explicit successful Auto recovery |
+
+No fan telemetry log is continuously written. Existing settings/history/recording paths and retention rules remain unchanged.
 
 ## Resource use
 
-Manual-off adds no fan USB requests unless recovery is pending. RPM reuses the existing once-per-second sample. A Settings-only timer updates changed native labels, skips work when minimized, and is removed when leaving Settings. Manual-on adds the readback checks above. No MSI service, extra driver, continuous fan log or GPU call is installed. Whole-process Windows gaming overhead and HWiNFO64 parity have not been measured.
+Live RPM reuses normal PSU telemetry. Optional Settings fan reads stop when minimized or on another page, and read failures back off. Active manual safety checks continue during monitoring. Fan changes run only on committed user actions or temporary safety recovery; permanent saves are never periodic. Normal telemetry is processed by the alarm engine before optional fan work.
+
+Ordinary read/lock waits are bounded, but Windows cancellation must still wait for native completion to protect I/O buffers. A hung driver can block the hardware worker. Gaming frame times, whole-app Windows overhead and equivalence with HWiNFO64 have not been measured; zero impact cannot be promised.

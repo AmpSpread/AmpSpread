@@ -1,4 +1,4 @@
-# Performance evidence — v9.7.8 preview (v9.7.7 benchmark baseline)
+# Performance evidence — v9.7.9 preview (v9.7.7 benchmark baseline)
 
 AmpSpread is designed for low overhead, but this build has **not** been measured in a Windows game or compared against HWiNFO64 on the same PC. No honest measurement can guarantee that an active monitor will never affect frame timing on every system.
 
@@ -47,3 +47,8 @@ Native measurement is still required before claiming parity or no performance re
 ## Fan preview overhead
 
 Manual-off adds no fan USB requests except pending recovery. The live RPM label reuses the existing sample and updates at one-second intervals only in Settings; minimized windows skip the refresh. Manual-on adds two setting/duty readbacks per monitoring cycle. Writes occur on changes or restoration, not every sample. Failed recovery retries are limited to every 30 seconds while connected, or explicit request/reconnect. The earlier CPU benchmarks do not measure this hardware path. Windows whole-process/game measurements are still needed.
+
+
+## v9.8.2 scope
+
+Settings configuration reads stop when hidden/minimized; live RPM reuses telemetry. Session and previously acknowledged saved-manual guards run during monitoring. Native cancellation may still block on a hung driver. Earlier synthetic benchmarks do not measure this new hardware path. No gaming/no-stutter/HWiNFO equivalence claim is made.
