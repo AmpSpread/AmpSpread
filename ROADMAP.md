@@ -25,3 +25,7 @@ See [installation](docs/INSTALLATION.md) and [data storage](docs/DATA_AND_UPDATE
 
 No release date is promised for these items. Signing and GitHub distribution
 are separate concerns; the updater retains Windows protections.
+
+## v9.7.8 fan preview validation
+
+The manual fan feature is available as a prerelease. Before promoting a higher-version stable release, validate both supported TS PSUs on Windows: 30% → 50% → automatic and measured RPM, restart/reconnect recovery, thermal behavior, UI at supported DPI settings and coexistence with other hardware utilities. Compare game frame times and resource use at equivalent monitoring settings. A software recovery path cannot guarantee restoration after a crash or USB loss.

@@ -16,6 +16,12 @@ and recorded events in the Meridian interface.
 [Installation](docs/INSTALLATION.md) · [Changelog](CHANGELOG.md) ·
 [Report a problem](https://github.com/AmpSpread/AmpSpread/issues)
 
+## PSU fan control preview
+
+**[v9.7.8 prerelease](https://github.com/AmpSpread/AmpSpread/releases/tag/v9.7.8)** adds live Settings RPM, a session-only manual **30–100%** target, **Apply speed**, and **Restore automatic** for the supported TS PSUs. MSI Center is not required. Read [fan controls and recovery limits](docs/PSU_FAN_CONTROL.md) before enabling it.
+
+The protocol was checked against MSI's SDK, but physical fan behavior has not been validated here. Crashes, USB loss or hung I/O can prevent restoration. This preview is excluded from normal in-app update checks; **v9.7.7 remains the latest stable release**.
+
 ## What it does
 
 - Monitor all six connector pin currents, total current and current/average/maximum spread.
@@ -48,7 +54,7 @@ Errors, invalid values, a response slower than 250 ms, a one-second request time
 
 There are no GPU temperature, generic field, clock, voltage, fan or power-limit queries/controls, no private NVAPI calls and no game hooks. PSU mode does not load NVML. NVIDIA describes board-power values on Ampere (except GA100) and newer GPUs as a one-second average; this is not a transient power measurement. [NVIDIA reference](https://docs.nvidia.com/deploy/nvml-api/api/group__nvmlDeviceQueries.html)
 
-Live PSU telemetry uses USB HID. The app has no PSU fan, voltage, firmware-update or hardware-limit controls. Configurable alarm limits are software monitoring limits.
+Live PSU telemetry uses USB HID. The stable v9.7.7 build has no PSU fan controls; v9.7.8 adds the limited preview above. Neither build offers voltage, firmware-update or hardware-limit controls. Configurable alarm limits are software monitoring limits.
 
 ## Compatibility
 
@@ -122,7 +128,7 @@ in those folders even when hidden in the history list. See [storage details](doc
 AmpSpread is a monitoring tool, not a certified hardware protection system.
 Its one-second sampling cannot capture every brief electrical transient.
 Automated tests and static build checks do not replace Windows and connected
-hardware testing. See [validation notes](docs/VALIDATION_v9.7.7.md).
+hardware testing. See [stable validation](docs/VALIDATION_v9.7.7.md) and [preview validation](docs/VALIDATION_v9.7.8.md).
 
 This repository provides downloads, documentation and an issue tracker. The
 application's Go source is not included in this distribution repository.

@@ -1,4 +1,4 @@
-AmpSpread v9.7.7 — Third-Party Interfaces
+AmpSpread v9.7.8 — Third-Party Interfaces
 =========================================
 
 Microsoft Windows
@@ -9,19 +9,23 @@ by Windows. No Microsoft binary is redistributed by AmpSpread.
 MSI MPG Ai1600TS / Ai1300TS
 ---------------------------
 Live PSU monitoring is implemented through the PSU's USB HID interface. The
-application has a compile-time allowlist containing only these fixed requests:
+monitoring path has a compile-time allowlist for these fixed requests:
 
   FA/51  product identification handshake
   51/E0  telemetry snapshot
   51/C1  firmware alarm status
 
-There is no arbitrary HID command editor, firmware updater, threshold writer,
-fan-control command or PSU configuration interface.
+The opt-in fan preview also permits 51/41 and 51/42 reads, validated 50/41
+mode/target requests and 50/43 zero-fan boolean requests. It excludes permanent
+save (50/F1), arbitrary commands, firmware updates, voltage, protection and
+power-limit settings. Protocol facts were inspected in MSI Center 2.0.74.0's
+Power Supply Unit SDK 1.0.0.38. No MSI binaries are redistributed.
+See docs/PSU_FAN_CONTROL.md.
 
 Legacy log compatibility
 ------------------------
 The offline CSV analyzer recognizes older AmpSpread/HWiNFO/Afterburner-compatible
-column names so historical logs remain readable. AmpSpread v9.7.7 contains no
+column names so historical logs remain readable. AmpSpread v9.7.8 contains no
 live HWiNFO or MSI Afterburner shared-memory polling code.
 
 All product names and trademarks belong to their respective owners. Compatibility

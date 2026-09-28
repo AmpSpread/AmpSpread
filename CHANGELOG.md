@@ -1,5 +1,14 @@
 # Changelog
 
+## 9.7.8 — PSU fan control preview (prerelease)
+
+- Added Settings live RPM, session-only 30–100% manual control, Apply speed and Restore automatic.
+- Added fan-only payload checks, readback, cooling-demand/fault restoration and device-bound recovery. Failed restoration blocks ordinary exit and update restart.
+- Uses the existing PSU connection without MSI Center or case-fan controls.
+- Automated portable/race tests and Windows compile/build checks pass. Physical hardware, Windows UI and gaming behavior remain untested.
+
+Read [fan control limits](docs/PSU_FAN_CONTROL.md) and [validation](docs/VALIDATION_v9.7.8.md). A crash, USB loss or hung I/O can prevent restoration. No firmware watchdog is promised. v9.7.7 remains stable; this prerelease is a manual download and remains unsigned.
+
 ## 9.7.7 — Optional NVIDIA power and update launch checks
 
 - Added **Settings / Tools → Use NVIDIA board power (off: PSU connector)**. Choose it and press **Save Settings**. It is off in new and existing configurations unless explicitly enabled.
