@@ -11,7 +11,7 @@ LOCALAPPDATA environment variable is unavailable.
 | `Spread Replays\YYYY\YYYY-MM` | Archived qualified spread events and their captured samples |
 | `Alarm History\YYYY\YYYY-MM` | Saved alarm incidents; optional companion incident CSVs |
 | `Sessions` | Full-session CSV recordings, only when enabled in Settings |
-| `psu_fan_recovery.json` | v9.7.8 preview: hashed same-device identity and prior zero-fan preference; removed after confirmed restoration |
+| `psu_fan_recovery.json` | Session fan recovery: hashed same-device identity and prior zero-fan preference; removed after confirmed restoration |
 | `config.json` | Saved thresholds, capture and display settings |
 | `last_run.json` | Last-run/heartbeat information for recovery diagnostics |
 | `crash.log`, `Spread Replays\archive_errors.log` | Error diagnostics, when an error occurs |
@@ -89,4 +89,9 @@ Driver faults are recorded in `nvidia_power_errors.log`; diagnostic logs rotate 
 
 ## PSU fan preview
 
-Manual mode is session-only and is not saved in `config.json`. A recovery record is written before hardware changes; preserve it while restoration is pending. See `PSU_FAN_CONTROL.md`. GitHub prereleases are excluded from normal in-app update checks.
+Session-only mode is the default and is not saved in `config.json`. v9.8.2 also offers explicit persistent saves on the captured Ai1600TS revision; it records pending saves and acknowledged manual profiles separately. Recovery records are written before hardware changes; preserve them while restoration is pending. See `PSU_FAN_CONTROL.md`. GitHub prereleases are excluded from normal in-app update checks.
+
+
+## v9.8.2 fan records
+
+See `PSU_FAN_CONTROL.md` for the session `.json` record, unfinished-save `.save` record, approved-target `.approved` record and preserved invalid records under `%LOCALAPPDATA%\AmpSpread`. There is no continuous fan log. Preserve recovery records while restoration is pending.

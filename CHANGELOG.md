@@ -1,5 +1,16 @@
 # Changelog
 
+## 9.8.2 — Guarded PSU fan control (prerelease)
+
+- Live RPM, Auto, Customized static target, Zero Fan in Auto and independent Auto recovery for Ai1600TS/Ai1300TS; session control is the default.
+- Permanent saving restricted to captured Ai1600TS USB revision 0DB0:808C / bcdDevice 0200. Ai1300TS saving remains disabled pending matching protocol evidence.
+- Strict MSI coordination mutex, atomic transactions, echo/readback validation, separate FC-acknowledged commits and durable same-device recovery records.
+- Partial or uncertain saves attempt temporary Auto and require explicit Save Auto; startup and polling never issue permanent commits.
+- Device-bound actions, saved-manual guards, reconnect/crash records, race fixes and slider commit handling. Raw target units replace unverified percentage labels.
+- Regression/race and fault-injection tests, vet, Windows compilation and static executable checks passed. Native Windows, real hardware and gaming tests remain outstanding.
+
+Read [release notes](docs/RELEASE_NOTES_v9.8.2.md), [fan controls](docs/PSU_FAN_CONTROL.md) and [validation](docs/VALIDATION_v9.8.2.md). This unsigned manual-download prerelease is excluded from normal update checks; v9.7.7 remains stable.
+
 ## 9.7.8 — PSU fan control preview (prerelease)
 
 - Added Settings live RPM, session-only 30–100% manual control, Apply speed and Restore automatic.

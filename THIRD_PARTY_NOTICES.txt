@@ -1,4 +1,4 @@
-AmpSpread v9.7.8 — Third-Party Interfaces
+AmpSpread v9.8.2 — Third-Party Interfaces
 =========================================
 
 Microsoft Windows
@@ -15,17 +15,19 @@ monitoring path has a compile-time allowlist for these fixed requests:
   51/E0  telemetry snapshot
   51/C1  firmware alarm status
 
-The opt-in fan preview also permits 51/41 and 51/42 reads, validated 50/41
-mode/target requests and 50/43 zero-fan boolean requests. It excludes permanent
-save (50/F1), arbitrary commands, firmware updates, voltage, protection and
-power-limit settings. Protocol facts were inspected in MSI Center 2.0.74.0's
-Power Supply Unit SDK 1.0.0.38. No MSI binaries are redistributed.
-See docs/PSU_FAN_CONTROL.md.
+The opt-in fan controls permit 51/41 and 51/42 reads and guarded 50/41
+mode/target and 50/43 Zero Fan requests. Explicit permanent save (50/F1)
+is limited to the captured Ai1600TS USB revision 0DB0:808C / 0200.
+Other supported TS revisions retain session-only control. There is no arbitrary
+register editor, firmware update, voltage, protection-limit or power-limit writer.
+Session protocol provenance includes MSI Center 2.0.74.0 PSU SDK 1.0.0.38;
+persistence evidence is the user's Ai1600TS USB captures. No MSI binaries are redistributed.
+See PSU_FAN_CONTROL.md for scope and recovery limits.
 
 Legacy log compatibility
 ------------------------
 The offline CSV analyzer recognizes older AmpSpread/HWiNFO/Afterburner-compatible
-column names so historical logs remain readable. AmpSpread v9.7.8 contains no
+column names so historical logs remain readable. AmpSpread v9.8.2 contains no
 live HWiNFO or MSI Afterburner shared-memory polling code.
 
 All product names and trademarks belong to their respective owners. Compatibility
