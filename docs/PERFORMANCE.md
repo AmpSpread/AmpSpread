@@ -1,4 +1,4 @@
-# Performance evidence — v9.7.7
+# Performance evidence — v9.7.8 preview (v9.7.7 benchmark baseline)
 
 AmpSpread is designed for low overhead, but this build has **not** been measured in a Windows game or compared against HWiNFO64 on the same PC. No honest measurement can guarantee that an active monitor will never affect frame timing on every system.
 
@@ -43,3 +43,7 @@ For the fewest monitoring interactions, keep NVIDIA board power off, leave full-
 To assess your PC, compare repeated runs of the same game scene with AmpSpread closed, minimized in PSU mode, then minimized in NVIDIA mode. Record frame-time percentiles and spikes as well as FPS, with the same frame-time recorder and game/settings each time. Compare HWiNFO64 separately at a matching polling interval and sensor scope. Watch CPU, private memory and disk activity for both AmpSpread processes when NVIDIA mode is enabled. Read-only telemetry can still wake a GPU or add driver work; process isolation does not remove that cost.
 
 Native measurement is still required before claiming parity or no performance regression. No new background performance logger is enabled in the app.
+
+## Fan preview overhead
+
+Manual-off adds no fan USB requests except pending recovery. The live RPM label reuses the existing sample and updates at one-second intervals only in Settings; minimized windows skip the refresh. Manual-on adds two setting/duty readbacks per monitoring cycle. Writes occur on changes or restoration, not every sample. Failed recovery retries are limited to every 30 seconds while connected, or explicit request/reconnect. The earlier CPU benchmarks do not measure this hardware path. Windows whole-process/game measurements are still needed.
