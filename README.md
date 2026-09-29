@@ -16,13 +16,15 @@ and recorded events in the Meridian interface.
 [Installation](docs/INSTALLATION.md) · [Changelog](CHANGELOG.md) ·
 [Report a problem](https://github.com/AmpSpread/AmpSpread/issues)
 
-## PSU fan control preview
+## Latest: v9.8.4 — PSU-only
 
-**[v9.8.3 prerelease](https://github.com/AmpSpread/AmpSpread/releases/tag/v9.8.3)** adds a dedicated MSI-inspired fan page, live RPM, a smoother slider, Live/Settings shortcuts and pages that scale to fit the window. Reset session is now in the header.
+All live measurements now come from the PSU. The NVIDIA driver integration and power-source toggle have been removed entirely.
 
-This UI build uses the author's working **v9.8.1 fan backend** after v9.8.2 left the controls disabled on the author's system. It does **not** include v9.8.2's controller safety rewrite or its model/revision save restrictions. Persistent-save and recovery limitations from v9.8.1 remain; physical validation of v9.8.3 is outstanding. Targets are raw values, not calibrated percentages.
+Includes v9.8.3's dedicated MSI-inspired fan page, live RPM, smoother slider, Live/Settings shortcuts, header Reset session and layouts that fit the window. An external tester has confirmed fan control working on an **Ai1300TS**, reporting approximately 2100–2200 maximum RPM. This report does not independently validate persistence, recovery or every firmware revision.
 
-Read [v9.8.3 notes](docs/RELEASE_NOTES_v9.8.3.md) and [fan controls](docs/PSU_FAN_CONTROL.md). Normal in-app checks skip prereleases; **v9.7.7 remains stable**.
+The working v9.8.1 fan backend is retained through v9.8.3/9.8.4. Its documented persistence/concurrency limitations remain; v9.8.2's safety rewrite is not included. Targets are raw values, not calibrated percentages.
+
+Read [release notes](docs/RELEASE_NOTES_v9.8.4.md), [validation](docs/VALIDATION_v9.8.4.md) and [fan controls](docs/PSU_FAN_CONTROL.md). This regular release is available through **Check for updates**, including from v9.8.3.
 
 ## What it does
 
@@ -40,23 +42,15 @@ Read [v9.8.3 notes](docs/RELEASE_NOTES_v9.8.3.md) and [fan controls](docs/PSU_FA
 - Configure software thresholds, hysteresis, capture windows, consecutive samples,
   sound and optional CSV recording.
 
-## GPU power source
-
-**PSU connector power is the default.** It uses only PSU measurements:
+## PSU-only power source
 
 `GPU connector power (W) = sum of six pin currents (A) × measured PSU +12V voltage (V)`
 
 This measures the monitored connector, excluding motherboard PCIe slot power. PSU-side voltage does not separately measure cable voltage drop. Total PSU output stays separate.
 
-To show the NVIDIA driver's **whole-board power**, open **Settings / Tools**, enable **Use NVIDIA board power (off: PSU connector)**, then **Save Settings**. The live headline changes to **GPU BOARD**. Connector watts remain in the power panel and recordings. The two measurements have independent peaks and labels; missing NVIDIA readings show unavailable. A valid zero remains zero.
+AmpSpread has no NVIDIA driver loading, NVML/NVAPI calls, helper process or GPU telemetry polling. An old enabled-driver setting is ignored. Historical generic GPU fields can still be read from older files without contacting a driver; the removed NVIDIA-specific fields are ignored.
 
-The optional reader uses only NVIDIA's documented NVML board-power query, in a separate process at below-normal priority. It makes one query at most every two seconds, waits after completion and never catches up missed polls. It requires exactly one NVIDIA GPU and Windows' signed System32 `nvml.dll`; older non-DCH layouts and unsupported power queries stop with an unavailable status. Nothing is installed or downloaded for the driver.
-
-Errors, invalid values, a response slower than 250 ms, a one-second request timeout or an eight-second startup timeout stop the reader. No automatic retry occurs while enabled; switch off, save, then on and save to try again after the old reader has fully exited. Readings expire after five seconds. A hung native call may leave the small helper process alive until it returns; a named mutex prevents another reader from attaching. The app never forcibly terminates a driver call or unloads the DLL from another thread. These precautions cannot contain a kernel-driver fault or prove freedom from driver conflicts.
-
-There are no GPU temperature, generic field, clock, voltage, fan or power-limit queries/controls, no private NVAPI calls and no game hooks. PSU mode does not load NVML. NVIDIA describes board-power values on Ampere (except GA100) and newer GPUs as a one-second average; this is not a transient power measurement. [NVIDIA reference](https://docs.nvidia.com/deploy/nvml-api/api/group__nvmlDeviceQueries.html)
-
-Live PSU telemetry uses USB HID. The stable v9.7.7 build has no PSU fan controls; v9.8.3 adds the fan-control preview above. Neither build offers voltage, firmware-update or hardware-limit controls. Configurable alarm limits are software monitoring limits.
+MSI Afterburner's GPU fan, clock and power-limit settings are outside AmpSpread's hardware path. Avoid simultaneous fan writes from MSI Center/Cooling Wizard or other software accessing the same PSU. AmpSpread does not modify case fans, GPU fans, voltage, firmware or hardware protection limits.
 
 ## Compatibility
 
@@ -66,16 +60,13 @@ Live PSU telemetry uses USB HID. The stable v9.7.7 build has no PSU fan controls
 | PSU support in code | MSI MPG Ai1600TS and Ai1300TS USB HID interfaces |
 | Live connection | Compatible PSU connected through its USB telemetry interface |
 | Offline analysis | Completed supported AmpSpread CSV log; no PSU connection required |
-| GPU vendor software | None needed in PSU mode; optional NVIDIA power requires signed System32 NVML and exactly one NVIDIA GPU |
+| GPU vendor software | None; all live telemetry is PSU-driven |
 
-Ai1600TS operation has been reported by the developer during development.
-Ai1300TS detection is implemented but has not been hardware-validated in this
-release's build environment. Simultaneous access to the same PSU by other
-monitoring applications has not been validated.
+Ai1600TS operation was reported by the author; Ai1300TS fan control was reported by an external tester. These reports do not certify every firmware revision or failure case. Simultaneous access to the same PSU by other software has not been validated.
 
 ## Resource use
 
-PSU sampling remains once per second. Minimized windows avoid live redraws and graph copies and pause replay playback. NVIDIA polling is optional and slower than PSU sampling. The five replay buffers remain bounded. See [measured scope and performance guidance](docs/PERFORMANCE.md); zero gaming impact and HWiNFO64 equivalence have not been established.
+PSU sampling remains once per second. Minimized windows avoid live redraws and graph copies and pause replay playback. No GPU driver is polled. The five replay buffers remain bounded. See [measured scope and performance guidance](docs/PERFORMANCE.md); zero gaming impact and HWiNFO64 equivalence have not been established.
 
 ## Live Top 5 replays
 
@@ -101,7 +92,7 @@ live Top 5 qualification and full-session CSV behavior are unchanged.
 
 ## Installation and updates
 
-Download `AmpSpread-v9.7.7-Windows-x64.zip` from the release's **Assets** list,
+Download `AmpSpread-v9.8.4-Windows-x64.zip` from the release's **Assets** list,
 extract it, close any older AmpSpread instance and run `AmpSpread.exe`.
 Monitoring starts when the app opens. Settings and recordings use
 `%LOCALAPPDATA%\AmpSpread` and are reused when upgrading.
@@ -130,9 +121,10 @@ in those folders even when hidden in the history list. See [storage details](doc
 AmpSpread is a monitoring tool, not a certified hardware protection system.
 Its one-second sampling cannot capture every brief electrical transient.
 Automated tests and static build checks do not replace Windows and connected
-hardware testing. See [stable validation](docs/VALIDATION_v9.7.7.md) and [preview validation](docs/VALIDATION_v9.8.3.md).
+hardware testing. See [validation](docs/VALIDATION_v9.8.4.md).
 
 This repository provides downloads, documentation and an issue tracker. The
 application's Go source is not included in this distribution repository.
 Third-party license notices accompany the download. Compatibility names belong
 to their respective owners and do not imply endorsement.
+

@@ -1,48 +1,11 @@
-AmpSpread v9.8.2 — Third-Party Interfaces
-=========================================
+AmpSpread v9.8.4 — Third-party interfaces
 
-Microsoft Windows
------------------
-AmpSpread uses standard Win32, HID, SetupAPI, GDI and file-system APIs supplied
-by Windows. No Microsoft binary is redistributed by AmpSpread.
+Microsoft Windows: standard Win32, USB HID, SetupAPI, GDI and filesystem APIs. No Windows binary is redistributed.
 
-MSI MPG Ai1600TS / Ai1300TS
----------------------------
-Live PSU monitoring is implemented through the PSU's USB HID interface. The
-monitoring path has a compile-time allowlist for these fixed requests:
+MSI MPG Ai1600TS / Ai1300TS: only the supported USB PSU interface is used. The inherited v9.8.1 fan backend permits product identification, telemetry/alarm and fan configuration reads, fan-mode/target and Zero Fan writes, and the validated F1 save command. See PSU_FAN_CONTROL.md for protocol scope and limitations. No MSI binary is redistributed.
 
-  FA/51  product identification handshake
-  51/E0  telemetry snapshot
-  51/C1  firmware alarm status
+No NVIDIA, NVML or NVAPI driver integration is included. Historical generic GPU columns are offline file parsing only. No live HWiNFO or Afterburner shared-memory polling is included.
 
-The opt-in fan controls permit 51/41 and 51/42 reads and guarded 50/41
-mode/target and 50/43 Zero Fan requests. Explicit permanent save (50/F1)
-is limited to the captured Ai1600TS USB revision 0DB0:808C / 0200.
-Other supported TS revisions retain session-only control. There is no arbitrary
-register editor, firmware update, voltage, protection-limit or power-limit writer.
-Session protocol provenance includes MSI Center 2.0.74.0 PSU SDK 1.0.0.38;
-persistence evidence is the user's Ai1600TS USB captures. No MSI binaries are redistributed.
-See PSU_FAN_CONTROL.md for scope and recovery limits.
+Go runtime and standard library: BSD-style license in licenses/GO-LICENSE.txt.
 
-Legacy log compatibility
-------------------------
-The offline CSV analyzer recognizes older AmpSpread/HWiNFO/Afterburner-compatible
-column names so historical logs remain readable. AmpSpread v9.8.2 contains no
-live HWiNFO or MSI Afterburner shared-memory polling code.
-
-All product names and trademarks belong to their respective owners. Compatibility
-does not imply sponsorship or endorsement.
-
-Go runtime and standard library
-------------------------------
-The compiled application includes the Go runtime and standard library.
-Their BSD-style license is reproduced in licenses/GO-LICENSE.txt.
-
-NVIDIA NVML (optional)
-----------------------
-The optional board-power reader dynamically uses the installed, signed Windows
-System32 nvml.dll. No NVIDIA binary, SDK header or third-party binding is
-redistributed. The resolved entry points are nvmlInit_v2, nvmlShutdown,
-nvmlDeviceGetCount_v2, nvmlDeviceGetHandleByIndex_v2 and nvmlDeviceGetPowerUsage.
-Reference: https://docs.nvidia.com/deploy/nvml-api/nvml-api-reference.html
-NVIDIA is a trademark of NVIDIA Corporation; compatibility does not imply endorsement.
+Product names and trademarks belong to their owners. Compatibility does not imply endorsement.

@@ -18,7 +18,6 @@ LOCALAPPDATA environment variable is unavailable.
 | `Updates\stage-*` | Downloaded executable, release notes and install plan; a helper copy is added when Restart now is chosen |
 | `Updates\pending.json` | Points to the downloaded update waiting for your restart choice |
 | `Updates\update_errors.log` | Update diagnostics, if an update fails |
-| `nvidia_power_errors.log` | Optional NVIDIA reader failures; bounded rotation adds `.1` |
 
 Older versions can have recordings in `%LOCALAPPDATA%\AmpSpread\v9.5` or `v8.7`;
 legacy history lookup also supports the earlier
@@ -81,17 +80,10 @@ are part of the updater. SHA-256 detects corruption relative to the GitHub asset
 it is not a substitute for publisher signing or protection against a compromised
 publishing account. This release remains unsigned.
 
-## Optional NVIDIA power data
+## PSU-only migration in v9.8.4
 
-The setting is stored as `nvidia_power_enabled` in `config.json`, false by default. Enabling it does not create a separate continuous driver log. Current readings are held in memory and copied into the existing sample/recording paths. Full-session and incident CSVs add `NVIDIA Board Power W` and `NVIDIA Power Sample Unix ms`; PSU mode leaves those fields blank. Replays keep the separate reading, validity and timestamp. Old GPU fields remain legacy data. One board-power reading can appear in several one-second PSU rows, with its original acquisition timestamp.
+The removed NVIDIA enable key is ignored in old config.json files and omitted on the next settings save. No GPU reader, helper or NVIDIA diagnostic log is created. Old files are not deleted. NVIDIA-specific board-power fields are ignored by current replay/report code; older generic GPU fields are offline compatibility data only.
 
-Driver faults are recorded in `nvidia_power_errors.log`; diagnostic logs rotate at their existing bounded size. Nothing is uploaded to NVIDIA or GitHub by this reader.
+## PSU fan records
 
-## PSU fan preview
-
-Session-only mode is the default and is not saved in `config.json`. v9.8.2 also offers explicit persistent saves on the captured Ai1600TS revision; it records pending saves and acknowledged manual profiles separately. Recovery records are written before hardware changes; preserve them while restoration is pending. See `PSU_FAN_CONTROL.md`. GitHub prereleases are excluded from normal in-app update checks.
-
-
-## v9.8.2 fan records
-
-See `PSU_FAN_CONTROL.md` for the session `.json` record, unfinished-save `.save` record, approved-target `.approved` record and preserved invalid records under `%LOCALAPPDATA%\AmpSpread`. There is no continuous fan log. Preserve recovery records while restoration is pending.
+The v9.8.1 fan backend retained in v9.8.3/9.8.4 uses explicit persistent Auto/Customized/Zero Fan actions. Saved settings intentionally remain active when the app closes. Select Auto to restore automatic control. Existing session recovery uses psu_fan_recovery.json; preserve it while restoration is pending. Normal startup/monitoring does not apply a new persistent profile. See PSU_FAN_CONTROL.md for the unchanged backend limitations. v9.8.2's separate save/approved record scheme is specific to that older preview, not this release.

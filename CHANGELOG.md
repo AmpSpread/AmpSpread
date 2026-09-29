@@ -1,5 +1,12 @@
 # Changelog
 
+## 9.8.4 — PSU-only (latest regular release)
+
+- Removed all NVIDIA driver loading, helper/polling code, settings and live power fields. PSU connector power is the only live GPU-power source.
+- Carries forward v9.8.3 fan UI, smooth slider and fitted layouts without changing PSU fan/USB behavior.
+- External Ai1300TS fan-control success reported; not blanket persistence/recovery validation.
+- Regression/race tests, both vet targets and Windows static build verification passed. See [release notes](docs/RELEASE_NOTES_v9.8.4.md) and [validation](docs/VALIDATION_v9.8.4.md).
+
 ## 9.8.3 — Dedicated fan page and window fitting (prerelease)
 
 - MSI-inspired PSU fan page with live RPM, Zero Fan and Auto/Customized controls; shortcuts from Live and Settings.
@@ -8,7 +15,7 @@
 - Based on the author's working v9.8.1 fan backend after the reported v9.8.2 disabled-controls regression. v9.8.2's safety rewrite and persistence restrictions are not included; inherited v9.8.1 backend limitations remain.
 - Regression/race tests, geometry checks, Windows compilation and static checks passed. Native Windows UI and physical PSU tests remain outstanding.
 
-Read [release notes](docs/RELEASE_NOTES_v9.8.3.md) and [validation](docs/VALIDATION_v9.8.3.md). Unsigned manual-download prerelease; v9.7.7 remains stable.
+Read [release notes](docs/RELEASE_NOTES_v9.8.3.md) and [validation](docs/VALIDATION_v9.8.3.md). Unsigned manual-download prerelease; v9.7.7 was the stable version at publication.
 
 ## 9.8.2 — Guarded PSU fan control (prerelease)
 
@@ -19,7 +26,7 @@ Read [release notes](docs/RELEASE_NOTES_v9.8.3.md) and [validation](docs/VALIDAT
 - Device-bound actions, saved-manual guards, reconnect/crash records, race fixes and slider commit handling. Raw target units replace unverified percentage labels.
 - Regression/race and fault-injection tests, vet, Windows compilation and static executable checks passed. Native Windows, real hardware and gaming tests remain outstanding.
 
-Read [release notes](docs/RELEASE_NOTES_v9.8.2.md), [fan controls](docs/PSU_FAN_CONTROL.md) and [validation](docs/VALIDATION_v9.8.2.md). This unsigned manual-download prerelease is excluded from normal update checks; v9.7.7 remains stable.
+Read [release notes](docs/RELEASE_NOTES_v9.8.2.md), [fan controls](docs/PSU_FAN_CONTROL.md) and [validation](docs/VALIDATION_v9.8.2.md). This unsigned manual-download prerelease is excluded from normal update checks; v9.7.7 was the stable version at publication.
 
 ## 9.7.8 — PSU fan control preview (prerelease)
 
@@ -86,3 +93,4 @@ This release remains unsigned. Windows policy blocks still require a trusted pub
 
 These releases use the compact Meridian interface. Earlier development versions
 are not described here as currently supported releases.
+
