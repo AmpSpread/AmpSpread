@@ -18,11 +18,11 @@ and recorded events in the Meridian interface.
 
 ## PSU fan control preview
 
-**[v9.8.2 prerelease](https://github.com/AmpSpread/AmpSpread/releases/tag/v9.8.2)** adds live PSU RPM, Auto, Customized static targets, Zero Fan in Auto and independent Restore automatic for both supported TS PSUs. MSI Center is not required. Session-only control is the default.
+**[v9.8.3 prerelease](https://github.com/AmpSpread/AmpSpread/releases/tag/v9.8.3)** adds a dedicated MSI-inspired fan page, live RPM, a smoother slider, Live/Settings shortcuts and pages that scale to fit the window. Reset session is now in the header.
 
-**Persistent saving is enabled only for the captured Ai1600TS USB revision (0DB0:808C, bcdDevice 0200).** Ai1300TS and other revisions retain session control until their save protocol is validated. Slider values are raw target units, not verified percentages.
+This UI build uses the author's working **v9.8.1 fan backend** after v9.8.2 left the controls disabled on the author's system. It does **not** include v9.8.2's controller safety rewrite or its model/revision save restrictions. Persistent-save and recovery limitations from v9.8.1 remain; physical validation of v9.8.3 is outstanding. Targets are raw values, not calibrated percentages.
 
-This patch repairs transaction locking, commit acknowledgements, recovery records, device binding and runtime safeguards. Read [fan controls and recovery limits](docs/PSU_FAN_CONTROL.md). This exact build still needs native Windows and physical PSU validation; crashes, USB loss or hung I/O can prevent restoration. Normal in-app checks skip prereleases; **v9.7.7 remains stable**.
+Read [v9.8.3 notes](docs/RELEASE_NOTES_v9.8.3.md) and [fan controls](docs/PSU_FAN_CONTROL.md). Normal in-app checks skip prereleases; **v9.7.7 remains stable**.
 
 ## What it does
 
@@ -56,7 +56,7 @@ Errors, invalid values, a response slower than 250 ms, a one-second request time
 
 There are no GPU temperature, generic field, clock, voltage, fan or power-limit queries/controls, no private NVAPI calls and no game hooks. PSU mode does not load NVML. NVIDIA describes board-power values on Ampere (except GA100) and newer GPUs as a one-second average; this is not a transient power measurement. [NVIDIA reference](https://docs.nvidia.com/deploy/nvml-api/api/group__nvmlDeviceQueries.html)
 
-Live PSU telemetry uses USB HID. The stable v9.7.7 build has no PSU fan controls; v9.8.2 adds the fan-control preview above. Neither build offers voltage, firmware-update or hardware-limit controls. Configurable alarm limits are software monitoring limits.
+Live PSU telemetry uses USB HID. The stable v9.7.7 build has no PSU fan controls; v9.8.3 adds the fan-control preview above. Neither build offers voltage, firmware-update or hardware-limit controls. Configurable alarm limits are software monitoring limits.
 
 ## Compatibility
 
@@ -130,7 +130,7 @@ in those folders even when hidden in the history list. See [storage details](doc
 AmpSpread is a monitoring tool, not a certified hardware protection system.
 Its one-second sampling cannot capture every brief electrical transient.
 Automated tests and static build checks do not replace Windows and connected
-hardware testing. See [stable validation](docs/VALIDATION_v9.7.7.md) and [preview validation](docs/VALIDATION_v9.8.2.md).
+hardware testing. See [stable validation](docs/VALIDATION_v9.7.7.md) and [preview validation](docs/VALIDATION_v9.8.3.md).
 
 This repository provides downloads, documentation and an issue tracker. The
 application's Go source is not included in this distribution repository.
