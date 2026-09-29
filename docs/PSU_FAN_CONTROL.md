@@ -1,4 +1,4 @@
-# v9.8.3 interface update
+# v9.8.4 fan-control scope
 
 Fan controls are now on their own **PSU fan control** page. Open it from Live or the Settings shortcut. The original v9.8.1 hardware communication and persistent save behavior below are retained. UI targets are raw values, not a newly established percentage mapping. This UI build does not resolve the independent audit's backend safety findings.
 
@@ -8,11 +8,13 @@ Fan controls are now on their own **PSU fan control** page. Open it from Live or
 
 **Supported PSU fan writes are limited to MSI MPG Ai1300TS PCIE5 and MPG Ai1600TS PCIE5 with GPU Safeguard+, connected by USB.** MSI Center is not required for AmpSpread operation.
 
+An external tester reported working fan control on Ai1300TS, with about 2100–2200 maximum RPM. This does not verify all persistence/recovery cases or firmware revisions. Fan/USB code is unchanged from v9.8.3.
+
 ## UI and use
 
-Open **Settings / Tools → PSU fan** while monitoring is running. The panel follows MSI Cooling Wizard's layout: PSU model and live RPM at the top, a Zero Fan switch, Automatic / Customized mode selector, then one horizontal target slider. AmpSpread additionally shows the slider's numeric percentage directly above it.
+Open **Settings / Tools → PSU fan** while monitoring is running. The panel follows MSI Cooling Wizard's layout: PSU model and live RPM at the top, a Zero Fan switch, Automatic / Customized mode selector, then one horizontal target slider. AmpSpread additionally shows the slider's numeric raw target directly above it.
 
-The persistent Customized slider is currently limited to **13–100%**. `13` is the lowest target directly observed from MSI Center on the physical Ai1600TS (`0x0D`); AmpSpread does not infer or probe lower targets. The slider is not a direct RPM command. Actual fan speed remains subject to the PSU's own protection logic.
+The persistent Customized slider is currently limited to **13–100 raw units**. `13` is the lowest target directly observed from MSI Center on the physical Ai1600TS (`0x0D`); AmpSpread does not infer or probe lower targets. The slider is not a direct RPM command. Actual fan speed remains subject to the PSU's own protection logic.
 
 Dragging the slider only changes the local preview. AmpSpread writes once when the drag ends, preventing a stream of nonvolatile save commands while the thumb is moving. Selecting **Customized** saves that target to the PSU. Selecting **Automatic** saves automatic control back to the PSU. **Zero Fan** is available only in Automatic mode.
 
@@ -44,7 +46,7 @@ A full removal of AC power from the PSU has not been tested, so v9.8.1 does not 
 - A Customized target below the PSU-reported calculated cooling demand is rejected before the write.
 - Every persistent save requires the validated `F1 → FC` acknowledgement and is followed by readback confirmation.
 - Zero Fan is forced off when switching to Customized mode; AmpSpread does not use an unvalidated Customized + Zero Fan combination.
-- Fan configuration is polled only while Settings is open, at most once per second. Normal monitoring outside Settings does not add these configuration reads.
+- Fan configuration is polled only while the dedicated fan page is open and visible, at most once per second. Normal monitoring outside the fan page does not add these configuration reads.
 - The old session-only recovery mechanism remains available internally so a pending recovery file from a previous preview can still restore safely. New MSI-style persistent operations do not create a recovery marker because persistence is deliberate.
 
 Do not operate MSI Center/Cooling Wizard and AmpSpread fan writes simultaneously when cross-process mutex coordination is unavailable. This build does not change case fans, motherboard fans, GPU fans, PSU voltage/protection limits, or GPU power limits.

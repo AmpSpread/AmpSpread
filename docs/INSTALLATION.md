@@ -1,13 +1,13 @@
 # Install or update AmpSpread
 
 1. Open the project's Releases page and expand **Assets**.
-2. Download **AmpSpread-v9.7.7-Windows-x64.zip**. GitHub's automatic **Source code**
+2. Download **AmpSpread-v9.8.4-Windows-x64.zip**. GitHub's automatic **Source code**
    ZIP contains this documentation repository, not the runnable application.
 3. Extract the ZIP into a folder you can write to.
 4. Close any older AmpSpread window, then run **AmpSpread.exe**.
 
 The build is for Windows x64. No installer, NVIDIA library or bundled kernel
-driver is included. Optional NVIDIA board power uses the signed driver library already installed in Windows System32. Live measurements require a compatible PSU's USB telemetry
+driver is included. AmpSpread does not load or poll a GPU driver. Live measurements require a compatible PSU's USB telemetry
 connection. Monitoring starts automatically when the application opens.
 
 ## In-app updates (v9.7.5 onward)
@@ -46,7 +46,7 @@ folder if you want an independent copy of your settings and recordings.
 Each release includes `SHA256SUMS.txt`. In PowerShell, run:
 
 ```powershell
-Get-FileHash .\AmpSpread-v9.7.7-Windows-x64.zip -Algorithm SHA256
+Get-FileHash .\AmpSpread-v9.8.4-Windows-x64.zip -Algorithm SHA256
 ```
 
 Compare the result with the release's checksum file. The EXE checksum is also
@@ -55,7 +55,7 @@ published copy; it is not a publisher identity certificate or a safety verdict.
 
 ## Windows security messages
 
-v9.7.7 is not Authenticode-signed. SmartScreen reputation warnings and Smart App
+v9.8.4 is not Authenticode-signed. SmartScreen reputation warnings and Smart App
 Control blocks are different Windows protections. A legitimate unsigned app
 can still be blocked, and a GitHub download does not bypass either system.
 If Windows blocks this build, it may not be usable under your current policy.
@@ -81,5 +81,6 @@ and [Smart App Control](https://learn.microsoft.com/en-us/windows/apps/develop/s
   vendor's total board-power reading.
 - A saved replay's selected sample may be below 0.850 A; the history cutoff
   applies to the event's peak, not every captured sample.
-- For the fewest GPU interactions, leave the NVIDIA option off. Opting in adds driver calls; process isolation cannot guarantee no display flicker or game impact.
+- This release has no NVIDIA driver integration. Minimize the window and leave full-session recording off when it is not needed to reduce monitoring overhead.
 - Native Windows and hardware validation remain necessary; see the validation and performance notes.
+
