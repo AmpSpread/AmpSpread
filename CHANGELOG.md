@@ -1,5 +1,15 @@
 # Changelog
 
+## 9.8.3 — Dedicated fan page and window fitting (prerelease)
+
+- MSI-inspired PSU fan page with live RPM, Zero Fan and Auto/Customized controls; shortcuts from Live and Settings.
+- Smooth slider positions, pending-save protection and deduplicated release handling; unchanged integer hardware targets.
+- Reset session moved into the header. Shared scaling keeps pages, controls and pointer coordinates aligned without whole-page scrolling.
+- Based on the author's working v9.8.1 fan backend after the reported v9.8.2 disabled-controls regression. v9.8.2's safety rewrite and persistence restrictions are not included; inherited v9.8.1 backend limitations remain.
+- Regression/race tests, geometry checks, Windows compilation and static checks passed. Native Windows UI and physical PSU tests remain outstanding.
+
+Read [release notes](docs/RELEASE_NOTES_v9.8.3.md) and [validation](docs/VALIDATION_v9.8.3.md). Unsigned manual-download prerelease; v9.7.7 remains stable.
+
 ## 9.8.2 — Guarded PSU fan control (prerelease)
 
 - Live RPM, Auto, Customized static target, Zero Fan in Auto and independent Auto recovery for Ai1600TS/Ai1300TS; session control is the default.

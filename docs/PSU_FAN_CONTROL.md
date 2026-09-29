@@ -1,54 +1,50 @@
-# PSU fan control — v9.8.2
+# v9.8.3 interface update
 
-**Only MSI MPG Ai1600TS PCIE5 and MPG Ai1300TS PCIE5 with GPU Safeguard+ and a USB connection are supported.** MSI Center is not required. This is a hardware-validation prerelease, not a certified protection system.
+Fan controls are now on their own **PSU fan control** page. Open it from Live or the Settings shortcut. The original v9.8.1 hardware communication and persistent save behavior below are retained. UI targets are raw values, not a newly established percentage mapping. This UI build does not resolve the independent audit's backend safety findings.
 
-| Control | Ai1600TS | Ai1300TS |
-|---|---|---|
-| Live measured RPM | Yes | Yes |
-| Session Auto / Customized target | Yes | Yes |
-| Session Zero Fan, only in Auto | Yes | Yes |
-| Restore automatic, without permanent save | Yes | Yes |
-| Explicit save in PSU | Captured USB revision `0DB0:808C`, bcdDevice `0200` only | Disabled pending model-specific persistence evidence |
+---
 
-The supplied Ai1600TS captures establish the observed write/commit behavior, including successful FC and rejected/other FE replies. They do not physically validate this new executable, every target, thermal override, AC power loss, driver hangs or other firmware revisions. Ai1300TS session commands use the existing TS SDK protocol support; they have not been physically validated in this build environment. Other Ai1600TS revisions retain session control rather than assuming permanent-write compatibility.
+# PSU fan control — v9.8.1
 
-## Use
+**Supported PSU fan writes are limited to MSI MPG Ai1300TS PCIE5 and MPG Ai1600TS PCIE5 with GPU Safeguard+, connected by USB.** MSI Center is not required for AmpSpread operation.
 
-1. Start monitoring, open Settings / Tools, and scroll to PSU fan.
-2. Leave **Save in PSU after closing** unchecked for session control. It starts unchecked and is not saved in app preferences.
-3. Select a target, then Customized. While Customized is active, releasing the slider commits the selected target. Mouse movement and keyboard repeats do not perform a write on every movement. The separate RPM counter displays measured response.
-4. **Auto** returns to Auto with Zero Fan OFF. **Zero Fan** can be toggled only with a fresh, confirmed Auto state.
-5. On the validated Ai1600TS revision, explicitly check **Save in PSU after closing** before selecting Auto/Customized or changing Zero Fan. The Auto button becomes **Save Auto**. A saved manual setting remains after AmpSpread closes. To change a running session-only manual setting to persistent operation, first Restore automatic.
-6. **Restore automatic** is a separate recovery action: it sets temporary Auto and Zero Fan OFF, sends no F1, and does not require fresh telemetry. It remains available during faults or unreadable recovery records, but still requires the same connected PSU and usable USB coordination.
+## UI and use
 
-The target range is **30–100 raw control units**. These values are not calibrated percentages of RPM, PWM duty, or MSI slider travel. The floor is conservative application policy, not a manufacturer's minimum or an all-load safety guarantee. Values `0D`, `2B` and `4D` were observed in MSI captures; the UI does not invent a percentage conversion. The application does not offer fan curves, case-fan control, GPU-fan control, PSU voltage or protection-limit writes.
+Open **Settings / Tools → PSU fan** while monitoring is running. The panel follows MSI Cooling Wizard's layout: PSU model and live RPM at the top, a Zero Fan switch, Automatic / Customized mode selector, then one horizontal target slider. AmpSpread additionally shows the slider's numeric percentage directly above it.
 
-## Saving and recovery
+The persistent Customized slider is currently limited to **13–100%**. `13` is the lowest target directly observed from MSI Center on the physical Ai1600TS (`0x0D`); AmpSpread does not infer or probe lower targets. The slider is not a direct RPM command. Actual fan speed remains subject to the PSU's own protection logic.
 
-- All writes require MSI's cross-process coordination mutex. Access denied, failure to establish coordination or timeout blocks the operation; there is no process-local fallback for fan control and no elevation request. Close other PSU controllers and their background components before using these controls. Programs that ignore MSI's mutex can still interfere.
-- A single existing USB worker owns reads and writes. A transaction keeps coordination across preconditions, write echoes, intermediate readbacks, separate F1 commits and final readback. The register allowlist is 41/43/F1 for fan writes and 41/42 for fan reads.
-- Both F1 responses must be FC. FE, missing or malformed replies fail the operation. Ordinary polling can report current device state but cannot promote an uncertain save to confirmed.
-- Before a persistent mutation, a synced, device-bound unfinished-save record is created. If a partial save fails, AmpSpread attempts **temporary** Auto/OFF and keeps the record. Reconnect/startup recovery does not repeat a persistent write.
-- If the status reports an unfinished save, press Restore automatic; on the validated revision, enable Save in PSU and press Save Auto to explicitly resolve permanent state. Ordinary close/update restart remains blocked while restoration is pending. Do not delete recovery records to suppress the warning.
-- Session manual control retains a separate recovery record and attempts to restore Auto plus the original Zero Fan preference on Stop/normal exit. Recovery records bind to a hashed PSU identity. A queued action cannot follow a replacement PSU.
-- A saved manual profile records only the user's last acknowledged manual target/device. It resumes monitoring safeguards after reopening AmpSpread; it never reapplies manual control or sends F1 at startup. Changed/faulted/stale telemetry, excess calculated demand or zero RPM after the grace period cause temporary Auto recovery and require explicit resolution of permanent state.
-- Session and saved manual guards run while monitoring, even outside Settings. They cannot run while the application/PC is off. A crash, disconnected cable or hung driver can prevent recovery. No firmware watchdog or guaranteed thermal override is claimed. Use Auto for unattended operation until the hardware behavior is validated.
+Dragging the slider only changes the local preview. AmpSpread writes once when the drag ends, preventing a stream of nonvolatile save commands while the thumb is moving. Selecting **Customized** saves that target to the PSU. Selecting **Automatic** saves automatic control back to the PSU. **Zero Fan** is available only in Automatic mode.
 
-## Files written on the PC
+Persistent settings intentionally remain active when AmpSpread closes and across a normal Windows reboot. To undo a persistent Customized setting, select **Automatic** while monitoring is running.
 
-All records are under `%LOCALAPPDATA%\AmpSpread` (use Settings / Tools → Open app data folder):
+## Protocol validated from MSI Center USB captures
 
-| File | Purpose |
-|---|---|
-| `psu_fan_recovery.json` | Session-only recovery: hashed device identity and prior Zero Fan preference |
-| `psu_fan_recovery.json.save` | Unfinished/uncertain persistent operation; retained until explicit confirmed Save Auto resolves it |
-| `psu_fan_recovery.json.approved` | Last acknowledged manual target/device; used only to resume monitoring safeguards |
-| `*.invalid-<timestamp>` | Preserved unreadable recovery records, quarantined only after an explicit successful Auto recovery |
+The Ai1600TS captures showed the following MSI Center sequence for each Apply operation:
 
-No fan telemetry log is continuously written. Existing settings/history/recording paths and retention rules remain unchanged.
+- Zero Fan write: `50 43 00/01`
+- save/commit request: `50 F1 00 ...`
+- required PSU acknowledgement: `50 F1 FC ...`
+- mode/target write: `50 41 01/03 00 <target>`
+- second save/commit request and `FC` acknowledgement
 
-## Resource use
+Observed mode values are `01` Automatic and `03` Customized. Register `43` uses `00` for Zero Fan off and `01` for Zero Fan on. AmpSpread's persistent path is allow-listed to these fan registers plus the validated `F1` commit; unrelated PSU write registers remain blocked.
 
-Live RPM reuses normal PSU telemetry. Optional Settings fan reads stop when minimized or on another page, and read failures back off. Active manual safety checks continue during monitoring. Fan changes run only on committed user actions or temporary safety recovery; permanent saves are never periodic. Normal telemetry is processed by the alarm engine before optional fan work.
+## Persistence validation
 
-Ordinary read/lock waits are bounded, but Windows cancellation must still wait for native completion to protect I/O buffers. A hung driver can block the hardware worker. Gaming frame times, whole-app Windows overhead and equivalence with HWiNFO64 have not been measured; zero impact cannot be promised.
+On the physical MPG Ai1600TS, a Customized `0x4D` target produced about **1648 RPM**. MSI Center was then closed, `MSI_Center_Service` and `MSI_Case_Service` were disabled/stopped, and Windows was rebooted. After reboot, the MSI services remained stopped and AmpSpread reported approximately the same fan RPM while performing read-only monitoring. The post-reboot capture contained no fan writes from AmpSpread. This validates persistence across a normal Windows reboot.
+
+A full removal of AC power from the PSU has not been tested, so v9.8.1 does not claim persistence across complete loss of PSU standby power.
+
+## Safety boundaries
+
+- Only the existing monitoring worker sends PSU fan requests through the existing HID handle; the UI never performs device I/O directly.
+- The full MSI-style write/commit sequence is serialized under AmpSpread's in-process PSU lock and MSI's `Global\\MSI_PSU_Mutex` when Windows permits access. If the existing MSI mutex ACL denies a standard-user handle, AmpSpread retains the v9.8.0 standalone fallback and does not request elevation.
+- Fresh PSU telemetry and normal firmware alarm state are required before a saved change.
+- A Customized target below the PSU-reported calculated cooling demand is rejected before the write.
+- Every persistent save requires the validated `F1 → FC` acknowledgement and is followed by readback confirmation.
+- Zero Fan is forced off when switching to Customized mode; AmpSpread does not use an unvalidated Customized + Zero Fan combination.
+- Fan configuration is polled only while Settings is open, at most once per second. Normal monitoring outside Settings does not add these configuration reads.
+- The old session-only recovery mechanism remains available internally so a pending recovery file from a previous preview can still restore safely. New MSI-style persistent operations do not create a recovery marker because persistence is deliberate.
+
+Do not operate MSI Center/Cooling Wizard and AmpSpread fan writes simultaneously when cross-process mutex coordination is unavailable. This build does not change case fans, motherboard fans, GPU fans, PSU voltage/protection limits, or GPU power limits.
