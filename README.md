@@ -16,15 +16,17 @@ and recorded events in the Meridian interface.
 [Installation](docs/INSTALLATION.md) · [Changelog](CHANGELOG.md) ·
 [Report a problem](https://github.com/AmpSpread/AmpSpread/issues)
 
-## Latest: v9.8.4 — PSU-only
+## Latest: v9.8.12 — Manual fan curves and live PSU readings
 
-All live measurements now come from the PSU. The NVIDIA driver integration and power-source toggle have been removed entirely.
+PSU output and temperature show **current / minimum / maximum** (“now/min/max”), with the current reading first. +12V voltage average/min/max is unchanged.
 
-Includes v9.8.3's dedicated MSI-inspired fan page, live RPM, smoother slider, Live/Settings shortcuts, header Reset session and layouts that fit the window. An external tester has confirmed fan control working on an **Ai1300TS**, reporting approximately 2100–2200 maximum RPM. This report does not independently validate persistence, recovery or every firmware revision.
+Manual fan curves use whole-number temperature thresholds to select and save a target through the same path as Manual static. The user reports the curve is working. The graph supports dragging, click-to-add and right-click-to-delete points. Applying a curve starts software control; normal stop or exit restores and saves the previous setting when communication succeeds.
 
-The working v9.8.1 fan backend is retained through v9.8.3/9.8.4. Its documented persistence/concurrency limitations remain; v9.8.2's safety rewrite is not included. Targets are raw values, not calibrated percentages.
+Use one PSU controller at a time. A crash, USB loss or failed recovery can leave the last saved target active. Repeated-save endurance is unverified. Targets follow MSI's protocol scale, not calibrated percentages of maximum RPM. See [fan-control behavior and limits](docs/PSU_FAN_CONTROL.md).
 
-Read [release notes](docs/RELEASE_NOTES_v9.8.4.md), [validation](docs/VALIDATION_v9.8.4.md) and [fan controls](docs/PSU_FAN_CONTROL.md). This regular release is available through **Check for updates**, including from v9.8.3.
+Also includes clearer three-row Top 5 spread cards, live graph following while zoomed, and adjacent Previous/Next replay controls. All live measurements remain PSU-driven with no NVIDIA driver integration.
+
+Read [release notes](docs/RELEASE_NOTES_v9.8.12.md) and [validation](docs/VALIDATION_v9.8.12.md). This regular release is available through **Check for updates**.
 
 ## What it does
 
@@ -78,8 +80,10 @@ Resetting or starting a new session also clears the cache.
 
 The cache holds at most five captures with at most 600 samples each. Long events
 keep start, peak and recent windows, with omitted sections identified in replay.
-The existing event qualification rules still apply: peaks of at least 1 A qualify
-immediately; smaller peaks must sustain the existing three-second duration rule.
+A peak above 0.4 A qualifies even if brief. Each card shows the peak, its high/low
+pins, and a separate average with analyzed duration. The average uses up to five
+seconds before the peak and continues while spread stays at least 0.5 A; it does
+not mean the peak was sustained for that duration.
 These temporary replays are separate from saved event history below.
 
 ## Saved event history
@@ -92,7 +96,7 @@ live Top 5 qualification and full-session CSV behavior are unchanged.
 
 ## Installation and updates
 
-Download `AmpSpread-v9.8.4-Windows-x64.zip` from the release's **Assets** list,
+Download `AmpSpread-v9.8.12-Windows-x64.zip` from the release's **Assets** list,
 extract it, close any older AmpSpread instance and run `AmpSpread.exe`.
 Monitoring starts when the app opens. Settings and recordings use
 `%LOCALAPPDATA%\AmpSpread` and are reused when upgrading.
@@ -121,7 +125,7 @@ in those folders even when hidden in the history list. See [storage details](doc
 AmpSpread is a monitoring tool, not a certified hardware protection system.
 Its one-second sampling cannot capture every brief electrical transient.
 Automated tests and static build checks do not replace Windows and connected
-hardware testing. See [validation](docs/VALIDATION_v9.8.4.md).
+hardware testing. See [validation](docs/VALIDATION_v9.8.12.md).
 
 This repository provides downloads, documentation and an issue tracker. The
 application's Go source is not included in this distribution repository.
