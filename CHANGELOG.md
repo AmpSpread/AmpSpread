@@ -1,6 +1,16 @@
 # Changelog
 
-## 9.8.4 — PSU-only (latest regular release)
+## 9.8.12 — Manual fan curves and live PSU readings (latest regular release)
+
+- PSU output and temperature now show current/min/max; +12V voltage retains avg/min/max.
+- Includes manual fan curves that save changed temperature-based targets through the Manual static path, with whole-number points, line-click insertion and right-click deletion.
+- Normal curve exit restores and saves the prior state when communication succeeds; fault/crash recovery attempts Auto. Curves do not activate on startup.
+- Adds a session 55°C Auto cooling guard, clearer peak-versus-average Top 5 cards, live following while zoomed, and reordered replay controls.
+- Fan/USB behavior is unchanged from the user's working v9.8.11 test build. No NVIDIA integration or admin requirement.
+- User-reported curve success is not independent hardware validation. Persistent-save endurance, concurrent controllers and failed-restoration limits remain documented.
+- See [release notes](docs/RELEASE_NOTES_v9.8.12.md), [validation](docs/VALIDATION_v9.8.12.md) and [fan controls](docs/PSU_FAN_CONTROL.md).
+
+## 9.8.4 — PSU-only
 
 - Removed all NVIDIA driver loading, helper/polling code, settings and live power fields. PSU connector power is the only live GPU-power source.
 - Carries forward v9.8.3 fan UI, smooth slider and fitted layouts without changing PSU fan/USB behavior.
