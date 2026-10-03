@@ -1,5 +1,16 @@
 # Data and update storage
 
+In v9.8.17, Settings / Tools includes a Recordings folder field, Browse, Use AppData and Open recordings. Choose a local folder, press Save Settings, then restart AmpSpread. A blank field uses `%LOCALAPPDATA%\AmpSpread`.
+
+Only `Alarm History`, `Sessions` and `Spread Replays` follow this choice. The active folder is fixed for each run. Existing recordings are not moved or deleted; the app searches its default and remembered previous folders. Up to 32 previous locations are retained. Network locations are not supported.
+
+Startup creates and removes small write-test files in the recording subfolders. If the chosen folder is unavailable or unwritable, the app warns and uses AppData for that launch. If that is also unavailable, it warns that recording may fail. A drive failure during a run is reported through the existing recording-error paths; it does not silently switch active folders.
+
+Configuration, recovery records, last-run/crash diagnostics and update staging remain in AppData. Use Open recordings for the active recording folder, or Open app data folder for operational files.
+
+The table below describes the default layout. When a custom folder is active, the three recording subfolders and their archive error log are under that chosen root.
+
+
 Press **Win+R**, paste `%LOCALAPPDATA%\AmpSpread`, and press Enter. Normally this
 is `C:\Users\<your Windows username>\AppData\Local\AmpSpread`. The AppData folder
 is hidden by default; Win+R or **Settings / Tools → Open app data folder** opens
@@ -87,3 +98,17 @@ The removed NVIDIA enable key is ignored in old config.json files and omitted on
 ## PSU fan records
 
 The v9.8.1 fan backend retained in v9.8.3/9.8.4 uses explicit persistent Auto/Customized/Zero Fan actions. Saved settings intentionally remain active when the app closes. Select Auto to restore automatic control. Existing session recovery uses psu_fan_recovery.json; preserve it while restoration is pending. Normal startup/monitoring does not apply a new persistent profile. See PSU_FAN_CONTROL.md for the unchanged backend limitations. v9.8.2's separate save/approved record scheme is specific to that older preview, not this release.
+
+## Fan curves and guard in v9.8.5
+
+Curve points are saved to %LOCALAPPDATA%\AmpSpread\psu_fan_recovery.json.curve.json on Apply Curve. They load as editable points, not an automatically activated profile. The identity-bound psu_fan_recovery.json records pending temporary-control recovery, its original target and Zero Fan state, and the strict-coordination requirement. Normal Stop/Exit restores Auto for temporary curves/overrides; abrupt crashes may leave the last target active. Preserve the recovery file until restoration succeeds. Selecting Auto arms the 55°C guard for the current monitoring session. These changes supersede the earlier description of an unchanged fan backend. See PSU_FAN_CONTROL.md for exact operation and limits.
+
+## Peak/average metadata in v9.8.7
+
+Live Top 5 accepts recorded peaks >0.400 A immediately. Avg uses available five-second pre-peak context and subsequent samples >=0.500 A, with seconds shown for that averaging window. See RELEASE_NOTES_v9.8.7.md for exact boundaries, gaps, and nearby-event grouping. Its sum/count are independent of replay compaction. Saved replay JSON adds average_spread, average_samples, average_start and average_end; older archives have no fabricated mean. The saved-history minimum remains 0.850 A.
+
+## PSU statistics and temperature rules in v9.8.8
+
+Live power/voltage shows +12V average/minimum/maximum in one row, efficiency immediately above PSU output, then output average/minimum/maximum. PSU temperature also has average/minimum/maximum. These are session aggregates from connected samples, separate from graph/replay storage; reset session clears them. Non-finite/out-of-range values are excluded; a valid zero counts.
+
+Temperature graph points now select held static targets by threshold, with no firmware curve upload. Normal curve stop restores the prior supported setting; fault/crash recovery attempts Auto. See PSU_FAN_CONTROL.md for exact behavior and limits.
