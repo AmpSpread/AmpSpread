@@ -1,6 +1,14 @@
 # Changelog
 
-## 9.8.12 — Manual fan curves and live PSU readings (latest regular release)
+## 9.8.16 — Custom fan curve removed (latest)
+
+- Removed graph editing, saved curve points and automated persistent curve saves after reported failures.
+- Keeps Auto, Manual static, Zero Fan and the separate 55°C Auto guard.
+- Legacy saved-curve recovery requires explicit Auto; no automatic persistent recovery saves at startup, polling or shutdown. ACK and readback are required.
+- PSU-only monitoring, live readings, replay and updater remain.
+- Software tests and Windows cross-build passed; connected PSU testing was not performed here.
+
+## 9.8.12 — Manual fan curves and live PSU readings (withdrawn: custom fan curve failures)
 
 - PSU output and temperature now show current/min/max; +12V voltage retains avg/min/max.
 - Includes manual fan curves that save changed temperature-based targets through the Manual static path, with whole-number points, line-click insertion and right-click deletion.
