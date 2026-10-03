@@ -16,17 +16,13 @@ and recorded events in the Meridian interface.
 [Installation](docs/INSTALLATION.md) · [Changelog](CHANGELOG.md) ·
 [Report a problem](https://github.com/AmpSpread/AmpSpread/issues)
 
-## Latest: v9.8.12 — Manual fan curves and live PSU readings
+## Latest: v9.8.16 — Custom fan curve removed
 
-PSU output and temperature show **current / minimum / maximum** (“now/min/max”), with the current reading first. +12V voltage average/min/max is unchanged.
+Custom fan graph control and automated persistent curve saves have been removed following reported save/recovery failures. **Auto, Manual static, Zero Fan and the existing 55°C Auto guard remain.** Old curve point files are ignored.
 
-Manual fan curves use whole-number temperature thresholds to select and save a target through the same path as Manual static. The user reports the curve is working. The graph supports dragging, click-to-add and right-click-to-delete points. Applying a curve starts software control; normal stop or exit restores and saves the previous setting when communication succeeds.
+An older pending recovery record does not trigger persistent saves on startup, polling or shutdown. Select Auto for one verified recovery attempt. Installing this update alone cannot restore a PSU setting; failed acknowledgement/readback keeps recovery pending. See [fan-control behavior](docs/PSU_FAN_CONTROL.md).
 
-Use one PSU controller at a time. A crash, USB loss or failed recovery can leave the last saved target active. Repeated-save endurance is unverified. Targets follow MSI's protocol scale, not calibrated percentages of maximum RPM. See [fan-control behavior and limits](docs/PSU_FAN_CONTROL.md).
-
-Also includes clearer three-row Top 5 spread cards, live graph following while zoomed, and adjacent Previous/Next replay controls. All live measurements remain PSU-driven with no NVIDIA driver integration.
-
-Read [release notes](docs/RELEASE_NOTES_v9.8.12.md) and [validation](docs/VALIDATION_v9.8.12.md). This regular release is available through **Check for updates**.
+PSU current/min/max readings, Top 5 event cards, replay, zoomed graph following and PSU-only monitoring remain. Use **Settings / Tools → Check for updates**, or download the latest ZIP. Software checks passed; this build has not been tested on connected PSU hardware here.
 
 ## What it does
 
@@ -96,7 +92,7 @@ live Top 5 qualification and full-session CSV behavior are unchanged.
 
 ## Installation and updates
 
-Download `AmpSpread-v9.8.12-Windows-x64.zip` from the release's **Assets** list,
+Download `AmpSpread-v9.8.16-Windows-x64.zip` from the release's **Assets** list,
 extract it, close any older AmpSpread instance and run `AmpSpread.exe`.
 Monitoring starts when the app opens. Settings and recordings use
 `%LOCALAPPDATA%\AmpSpread` and are reused when upgrading.
@@ -125,7 +121,7 @@ in those folders even when hidden in the history list. See [storage details](doc
 AmpSpread is a monitoring tool, not a certified hardware protection system.
 Its one-second sampling cannot capture every brief electrical transient.
 Automated tests and static build checks do not replace Windows and connected
-hardware testing. See [validation](docs/VALIDATION_v9.8.12.md).
+hardware testing. See [validation](https://github.com/AmpSpread/AmpSpread/releases/latest).
 
 This repository provides downloads, documentation and an issue tracker. The
 application's Go source is not included in this distribution repository.
