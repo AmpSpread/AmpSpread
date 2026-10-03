@@ -1,6 +1,15 @@
 # Changelog
 
-## 9.8.16 — Custom fan curve removed (latest)
+## 9.8.17 — Redraw fixes and recording folder (latest)
+
+- Reduces repeated control moves, label/font updates, list redraws and background erases. Keeps the backbuffer until its dimensions change and applies the dark title bar before showing the main window.
+- Filters cached HID hardware IDs before opening supported PSU device handles.
+- Adds a recordings-folder chooser with restart-based activation, write checks, fallback warnings and continued access to earlier recordings. Operational settings, recovery and update files stay in AppData.
+- Confirms updater startup before optional storage or PSU dialogs.
+- Custom fan curves remain removed; Auto, Manual static, Zero Fan and legacy recovery safeguards remain.
+- Regression/race tests, vet and Windows executable checks passed. Native Windows, hardware and gaming validation remain outstanding.
+
+## 9.8.16 — Custom fan curve removed
 
 - Removed graph editing, saved curve points and automated persistent curve saves after reported failures.
 - Keeps Auto, Manual static, Zero Fan and the separate 55°C Auto guard.
