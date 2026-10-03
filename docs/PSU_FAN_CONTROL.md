@@ -1,33 +1,19 @@
-# AmpSpread 9.8.12 PSU fan control
+# PSU fan control in v9.8.16
 
-Supports MSI MPG Ai1600TS and Ai1300TS Safeguard+ PSUs only.
+Supported hardware: MSI Safeguard+ Ai1300TS and Ai1600TS only.
 
-## Manual static and manual fan curve
+- Auto saves the PSU firmware's automatic mode; AmpSpread does not implement MSI's firmware fan curve.
+- Manual static saves a selected target when the slider is released. Target percentages are protocol settings, not percentages of maximum RPM.
+- Zero Fan remains restricted to supported Auto states.
+- Custom graph control, point persistence/loading and automated persistent curve saves have been removed.
+- The existing 55°C guard is armed only after explicit Auto selection. It uses temporary manual commands, with a target floor of 75 and firmware-demand checks; it never commits persistent saves. Normal stop restores Auto after an active guard override.
 
-Manual static saves the selected target when the slider is released. Manual fan curve now calls that SAME save function when the temperature rule chooses a new target. The validated sequence is Zero Fan OFF, F1 save/FC acknowledgement, manual mode with target, then F1 save/FC acknowledgement. Final mode, target, Zero Fan and cooling demand are read back. Missing acknowledgements and mismatches are failures, never reported as success.
+Persistent saves retain their existing allowlist, F1/FC acknowledgement, readback checks and serialized USB worker. Monitoring, replay, updater and fonts are unchanged.
 
-Each graph point sets a temperature threshold. Its target is held until the next point. Whole-number temperatures and targets are used, with 2–12 points and nondecreasing fan targets. Click the line to add, drag to move, right-click a point to delete. Editing is local until Apply curve; applying saves the curve points locally and activates control.
+## Older recovery records
 
-The existing worker evaluates available telemetry at most every two seconds, saves on activation and when the target changes, and does not repeatedly save unchanged targets. Downward changes require a stable lower target for at least five seconds. Target values are the MSI protocol scale, not literal percentages of maximum RPM. The firmware-demand floor and at-least-75 target at 55°C remain.
+Old .curve.json point files are ignored. Version-3 pending recovery records are recognized solely for safe migration. They cannot resume a curve and never initiate persistent writes automatically. Select Auto to request one verified recovery transaction. Zero Fan ON restoration occurs only after Auto/Zero Fan OFF has first been saved and read back. Missing ACK, readback failure or wrong device retains the record. Failed saves are not automatically retried. Older temporary recovery records retain their existing recovery behavior.
 
-## Coordination
+Do not delete a pending record to pretend the hardware was restored. If Auto fails, independently restore and verify a safe setting with the manufacturer's controller. The close dialog permits an explicit user-confirmed exit while preserving the record; it does not claim recovery succeeded.
 
-Curves now use the same access policy as explicit Manual static saves: use the named MSI mutex when accessible, otherwise allow the existing in-process fallback for access-denied/missing-mutex cases. A single worker and transaction lease serialize AmpSpread reads, saves and readback. Timeouts and unexpected errors still fail. Nested saves reuse that lease without reacquiring the nonrecursive process lock.
-
-This fallback does NOT exclude another program from accessing the PSU. Keep other PSU controllers, including MSI Center/Cooling Wizard background control, inactive. This version does not stop services, change Windows permissions, request elevation or claim exclusive cross-process ownership when only the internal lock is available. The 55°C Auto guard and recovery of older temporary sessions retain their strict coordination policy.
-
-## Saved state and restoration
-
-A version-3, identity-bound recovery marker records the previous Auto/Manual static state before the first curve save. Normal stop/exit restores AND SAVES that prior state after readback checks. If its static target is below current firmware cooling demand, or restoration fails, Auto is attempted. Fault recovery and recovery after an unclean exit restore and save Auto. Missing save acknowledgement retains the recovery marker for a later attempt. Old version-1/2 records retain their original recovery behavior.
-
-A crash, forced termination, lost USB access or failed restoration can leave the last SAVED curve target active, including after a PSU power cycle. Restoration requires AmpSpread and successful communication; there is no independently verified hardware watchdog. Curve points reload on startup but never activate automatically.
-
-Recovery and curve files are under %LOCALAPPDATA%\AmpSpread. Do not delete a pending recovery marker merely to bypass recovery.
-
-## Auto and Zero Fan
-
-Auto explicitly saves the firmware's automatic mode. Selecting Auto arms the existing 55°C guard for that monitoring session. Startup does not arm the guard. Zero Fan changes remain restricted to validated Auto states. The guard still uses temporary manual commands, not persistent curve saves.
-
-## Validation limits
-
-The manual save protocol was observed in supplied MSI traffic; the user's Ai1300TS tester reported working basic fan control. The user reports the persistent temperature loop is working. Independent validation here is limited to software tests. PSU nonvolatile-memory write endurance for repeated curve saves is unknown; no lifetime claim is made. This release does not claim conflict-free operation, measured gaming impact or comprehensive thermal protection.
+The removal and recovery paths have automated software tests. This build has not been executed on real PSU hardware here.
