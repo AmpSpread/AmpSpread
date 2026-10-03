@@ -16,13 +16,15 @@ and recorded events in the Meridian interface.
 [Installation](docs/INSTALLATION.md) · [Changelog](CHANGELOG.md) ·
 [Report a problem](https://github.com/AmpSpread/AmpSpread/issues)
 
-## Latest: v9.8.16 — Custom fan curve removed
+## Latest: v9.8.17 — Redraw fixes and recording folder
 
-Custom fan graph control and automated persistent curve saves have been removed following reported save/recovery failures. **Auto, Manual static, Zero Fan and the existing 55°C Auto guard remain.** Old curve point files are ignored.
+Reduces redundant control movement, label updates, font recreation and background erasing. HID discovery filters supported PSU hardware IDs before opening device handles.
 
-An older pending recovery record does not trigger persistent saves on startup, polling or shutdown. Select Auto for one verified recovery attempt. Installing this update alone cannot restore a PSU setting; failed acknowledgement/readback keeps recovery pending. See [fan-control behavior](docs/PSU_FAN_CONTROL.md).
+Choose a local recordings folder in **Settings / Tools** using **Browse**, then **Save Settings** and restart. Alarm History, Sessions and Spread Replays use that folder. Existing recordings stay in their previous folders and remain searchable; settings, recovery records and update files stay in AppData. An unavailable folder falls back to AppData with a warning.
 
-PSU current/min/max readings, Top 5 event cards, replay, zoomed graph following and PSU-only monitoring remain. Use **Settings / Tools → Check for updates**, or download the latest ZIP. Software checks passed; this build has not been tested on connected PSU hardware here.
+Custom fan graph control remains removed. **Auto, Manual static, Zero Fan and the existing 55°C Auto guard remain.** Old saved-curve recovery requires explicit Auto; it never performs persistent recovery writes on startup, polling or shutdown.
+
+Tests, race checks, Windows cross-build and executable checks passed. Native Windows, physical PSU and gaming performance testing remain outstanding; these fixes do not establish the cause of whole-monitor flicker.
 
 ## What it does
 
@@ -92,10 +94,11 @@ live Top 5 qualification and full-session CSV behavior are unchanged.
 
 ## Installation and updates
 
-Download `AmpSpread-v9.8.16-Windows-x64.zip` from the release's **Assets** list,
+Download `AmpSpread-v9.8.17-Windows-x64.zip` from the release's **Assets** list,
 extract it, close any older AmpSpread instance and run `AmpSpread.exe`.
-Monitoring starts when the app opens. Settings and recordings use
-`%LOCALAPPDATA%\AmpSpread` and are reused when upgrading.
+Monitoring starts when the app opens. Settings stay in
+`%LOCALAPPDATA%\AmpSpread`. Recordings use that folder by default, or the local
+folder selected in Settings. Existing settings and recordings are retained.
 
 This release is **unsigned**. Windows SmartScreen or Smart App Control may warn
 or block it. Hosting it on GitHub does not remove that restriction or certify
