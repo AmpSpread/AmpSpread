@@ -16,15 +16,15 @@ and recorded events in the Meridian interface.
 [Installation](docs/INSTALLATION.md) · [Changelog](CHANGELOG.md) ·
 [Report a problem](https://github.com/AmpSpread/AmpSpread/issues)
 
-## Latest: v9.8.18 — Readable window resizing
+## Latest: v9.8.19 — Pin colors and replay layout
 
-Text stays readable as the window gets smaller. Cards and spacing tighten and graphs use the remaining room instead of shrinking the entire interface. Minimum client area is **720 × 620 DIPs**, excluding the Windows border/title bar. Windows DPI scaling remains supported; exceptionally small monitor work areas still use fallback fitting.
+Pin labels, associated amp readings, bars and maximum markers now match the six timeline colors throughout Live, Top 5, replay, history and reports. Near-limit and over-limit bar outlines still show warnings.
 
-Settings, fan controls, history and replay use compact layouts. Saved-log reports have **Overview, Spread events, Pin statistics, and Power & alarms** sections; exports retain the full report. Supporting text is 12–13 DIPs, and ordinary resizing no longer rebuilds native control fonts.
+Replay detail rows have more room, and graph headers and axis labels no longer overlap in compact layouts. The readable sizing and 720 × 620 DIP minimum client area from v9.8.18 remain.
 
-The v9.8.17 redraw optimizations, supported-PSU HID filtering and recordings-folder setting remain. **Auto, Manual static, Zero Fan and the existing 55°C Auto guard are unchanged.** Custom fan curves and NVIDIA driver integration remain removed.
+PSU polling, fan commands, recovery and updater behavior are unchanged. Custom fan curves and NVIDIA driver integration remain removed.
 
-Regression/race tests, Windows vet, cross-build and executable checks passed. Native Windows appearance, connected PSU behavior and gaming performance were not tested in the build environment.
+Portable regression tests, pin-color and replay geometry checks, Windows vet, GUI build and static executable checks passed. Native Windows appearance, physical PSU behavior and gaming performance were not tested in the build environment.
 
 ## What it does
 
@@ -94,7 +94,7 @@ live Top 5 qualification and full-session CSV behavior are unchanged.
 
 ## Installation and updates
 
-Download `AmpSpread-v9.8.18-Windows-x64.zip` from the release's **Assets** list,
+Download `AmpSpread-v9.8.19-Windows-x64.zip` from the release's **Assets** list,
 extract it, close any older AmpSpread instance and run `AmpSpread.exe`.
 Monitoring starts when the app opens. Settings stay in
 `%LOCALAPPDATA%\AmpSpread`. Recordings use that folder by default, or the local
