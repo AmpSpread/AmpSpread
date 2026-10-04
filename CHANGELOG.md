@@ -1,6 +1,15 @@
 # Changelog
 
-## 9.8.18 — Readable window resizing (latest)
+## 9.8.19 — Pin colors and replay layout (latest)
+
+- Matches explicit pin labels, associated current readings, bars and maximum markers to timeline colors across Live, Top 5, replay, history and reports.
+- Preserves yellow/red warning outlines and the red current-limit line.
+- Expands replay detail rows and graph header clearance; adjusts tick density for compact plots.
+- Retains readable resizing, redraw optimizations and supported-PSU HID filtering. Fan commands, recovery, polling and updater are unchanged.
+- Custom fan curves and NVIDIA driver integration remain removed.
+- Portable regression, pin-color and replay geometry checks, Windows vet, GUI build and static executable checks passed. Native Windows, physical PSU and gaming validation remain outstanding.
+
+## 9.8.18 — Readable window resizing
 
 - Keeps text at its normal scale while resizing supported windows. Minimum client area: 720 × 620 DIPs, with fallback fitting only when monitor space is smaller.
 - Tightens cards and spacing and reduces graph space before text. Supporting text uses 12–13 DIPs; native controls stay at 13 DIPs during ordinary resizing.
