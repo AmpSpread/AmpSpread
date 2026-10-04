@@ -16,15 +16,15 @@ and recorded events in the Meridian interface.
 [Installation](docs/INSTALLATION.md) · [Changelog](CHANGELOG.md) ·
 [Report a problem](https://github.com/AmpSpread/AmpSpread/issues)
 
-## Latest: v9.8.17 — Redraw fixes and recording folder
+## Latest: v9.8.18 — Readable window resizing
 
-Reduces redundant control movement, label updates, font recreation and background erasing. HID discovery filters supported PSU hardware IDs before opening device handles.
+Text stays readable as the window gets smaller. Cards and spacing tighten and graphs use the remaining room instead of shrinking the entire interface. Minimum client area is **720 × 620 DIPs**, excluding the Windows border/title bar. Windows DPI scaling remains supported; exceptionally small monitor work areas still use fallback fitting.
 
-Choose a local recordings folder in **Settings / Tools** using **Browse**, then **Save Settings** and restart. Alarm History, Sessions and Spread Replays use that folder. Existing recordings stay in their previous folders and remain searchable; settings, recovery records and update files stay in AppData. An unavailable folder falls back to AppData with a warning.
+Settings, fan controls, history and replay use compact layouts. Saved-log reports have **Overview, Spread events, Pin statistics, and Power & alarms** sections; exports retain the full report. Supporting text is 12–13 DIPs, and ordinary resizing no longer rebuilds native control fonts.
 
-Custom fan graph control remains removed. **Auto, Manual static, Zero Fan and the existing 55°C Auto guard remain.** Old saved-curve recovery requires explicit Auto; it never performs persistent recovery writes on startup, polling or shutdown.
+The v9.8.17 redraw optimizations, supported-PSU HID filtering and recordings-folder setting remain. **Auto, Manual static, Zero Fan and the existing 55°C Auto guard are unchanged.** Custom fan curves and NVIDIA driver integration remain removed.
 
-Tests, race checks, Windows cross-build and executable checks passed. Native Windows, physical PSU and gaming performance testing remain outstanding; these fixes do not establish the cause of whole-monitor flicker.
+Regression/race tests, Windows vet, cross-build and executable checks passed. Native Windows appearance, connected PSU behavior and gaming performance were not tested in the build environment.
 
 ## What it does
 
@@ -94,7 +94,7 @@ live Top 5 qualification and full-session CSV behavior are unchanged.
 
 ## Installation and updates
 
-Download `AmpSpread-v9.8.17-Windows-x64.zip` from the release's **Assets** list,
+Download `AmpSpread-v9.8.18-Windows-x64.zip` from the release's **Assets** list,
 extract it, close any older AmpSpread instance and run `AmpSpread.exe`.
 Monitoring starts when the app opens. Settings stay in
 `%LOCALAPPDATA%\AmpSpread`. Recordings use that folder by default, or the local
