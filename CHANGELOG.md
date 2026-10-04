@@ -1,6 +1,15 @@
 # Changelog
 
-## 9.8.17 — Redraw fixes and recording folder (latest)
+## 9.8.18 — Readable window resizing (latest)
+
+- Keeps text at its normal scale while resizing supported windows. Minimum client area: 720 × 620 DIPs, with fallback fitting only when monitor space is smaller.
+- Tightens cards and spacing and reduces graph space before text. Supporting text uses 12–13 DIPs; native controls stay at 13 DIPs during ordinary resizing.
+- Fits settings, PSU fan controls, history and replay into compact layouts. Replay reduces tick density when its plot is short.
+- Adds Overview, Spread events, Pin statistics and Power & alarms sections to saved-log report previews. Full PNG/CSV exports remain available.
+- Preserves redraw caches, supported-PSU HID filtering, recording folders, PSU-only monitoring and existing fan behavior. Custom fan curves remain removed.
+- Portable regression/race suites, Windows vet, GUI build and static executable checks passed. Native Windows visual, hardware and gaming tests remain outstanding.
+
+## 9.8.17 — Redraw fixes and recording folder
 
 - Reduces repeated control moves, label/font updates, list redraws and background erases. Keeps the backbuffer until its dimensions change and applies the dark title bar before showing the main window.
 - Filters cached HID hardware IDs before opening supported PSU device handles.
