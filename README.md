@@ -131,3 +131,6 @@ application's Go source is not included in this distribution repository.
 Third-party license notices accompany the download. Compatibility names belong
 to their respective owners and do not imply endorsement.
 
+## Support AmpSpread
+
+If AmpSpread is useful to you, you can [support its development on Patreon](https://patreon.com/AmpSpread).
