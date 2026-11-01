@@ -1,19 +1,17 @@
-# PSU fan control in v9.8.16
+# AmpSpread v9.8.66 PSU fan control
 
-Supported hardware: MSI Safeguard+ Ai1300TS and Ai1600TS only.
+For MSI MPG Ai1600TS and Ai1300TS Safeguard+ PSUs only.
 
-- Auto saves the PSU firmware's automatic mode; AmpSpread does not implement MSI's firmware fan curve.
-- Manual static saves a selected target when the slider is released. Target percentages are protocol settings, not percentages of maximum RPM.
-- Zero Fan remains restricted to supported Auto states.
-- Custom graph control, point persistence/loading and automated persistent curve saves have been removed.
-- The existing 55°C guard is armed only after explicit Auto selection. It uses temporary manual commands, with a target floor of 75 and firmware-demand checks; it never commits persistent saves. Normal stop restores Auto after an active guard override.
+Auto, saved Manual static and Zero Fan remain on the dedicated fan page. The slider saves an integer static target when released. Target percentage is a PSU setting; RPM and temperature are measured telemetry. Custom persistent fan curves remain removed.
 
-Persistent saves retain their existing allowlist, F1/FC acknowledgement, readback checks and serialized USB worker. Monitoring, replay, updater and fonts are unchanged.
+Persistent saves require F1 acknowledgement and matching readback. The initial read, complete save sequence and final readback share one coordination lease. Explicit Auto, Manual static, Zero Fan changes and legacy recovery again support standard-user operation as in v9.8.19. When Windows denies access to MSI's optional shared coordinator, or no coordinator exists and it cannot be created, these explicit operations retain AmpSpread's process lock and single monitoring worker for the whole transaction. An accessible shared coordinator is still acquired; a busy coordinator or an unexpected error still refuses changes. The unattended cooling guard continues to require a usable shared coordinator. Use one PSU controller at a time: the process lock cannot coordinate another application that cannot share the MSI mutex.
 
-## Older recovery records
+Before a potentially effective persistent save, AmpSpread writes a pending-save marker. Failed acknowledgements or readbacks keep persistence UNKNOWN, retain the original failure message, block further manual/Zero Fan changes, and do not automatically retry persistent writes. The marker survives restarting the app. Connect the same PSU and explicitly select Auto to confirm recovery. A live mode read is never treated as proof of persistence.
 
-Old .curve.json point files are ignored. Version-3 pending recovery records are recognized solely for safe migration. They cannot resume a curve and never initiate persistent writes automatically. Select Auto to request one verified recovery transaction. Zero Fan ON restoration occurs only after Auto/Zero Fan OFF has first been saved and read back. Missing ACK, readback failure or wrong device retains the record. Failed saves are not automatically retried. Older temporary recovery records retain their existing recovery behavior.
+The worker reads fan configuration once at startup without changing it. A saved/manual setting receives temperature/RPM checks from existing telemetry and calculated-demand checks about every five seconds while monitoring. The zero RPM warning requires fresh zero RPM readings spanning at least five continuous seconds, after the existing ten-second spin-up allowance. Positive RPM, invalid or interrupted readings, reconnecting, stopping monitoring, or selecting Auto resets the zero RPM timer. Rechecking a cached sample does not advance it. Demand above the target or temperature at/above 55°C still raises its own warning without waiting for the zero RPM timer. Warnings do not automatically overwrite a saved static target. Changes within the same warning category do not produce a prompt every sample. Checks stop when monitoring stops.
 
-Do not delete a pending record to pretend the hardware was restored. If Auto fails, independently restore and verify a safe setting with the manufacturer's controller. The close dialog permits an explicit user-confirmed exit while preserving the record; it does not claim recovery succeeded.
+Selecting Auto explicitly arms the existing 55°C cooling guard for that session. Startup does not arm it. At 55°C+ with Auto output below 75%, the guard attempts a coordinated temporary target of at least 75% and the calculated demand, checks readback, and attempts Auto restoration on normal stop. This is an application policy, not a certified thermal safeguard or proof of a firmware fault. A crash, lost communication or stalled driver can prevent restoration.
 
-The removal and recovery paths have automated software tests. This build has not been executed on real PSU hardware here.
+Old saved-curve recovery records remain supported. They do not cause automatic persistent commits on startup, polling, reconnect or shutdown. Explicit recovery of the same PSU is required. Do not delete recovery records to bypass confirmation.
+
+Software tests do not replace physical PSU testing. This build has not issued PSU commands in the build environment.

@@ -1,6 +1,17 @@
 # Changelog
 
-## 9.8.19 — Pin colors and replay layout (latest)
+## 9.8.66 — Port 2 support and clearer balance readings (latest, 2026-11-01)
+
+- Adds selected-port 12V-2x6 monitoring for PSU socket 1 or 2; port 2 current readings are author-confirmed on an Ai1600TS.
+- Adds current, session-average and session-maximum six-pin mean-absolute-deviation captions while keeping gap-based main spread figures and Top 5.
+- Corrects selected-port firmware status using the original MSI plugin mapping; incomplete C1 replies stay unavailable.
+- Separates the app Safeguard display from the PSU Firmware alarm row.
+- Centres grey captions using measured font height and balanced spacing; the GPU connector footer shows only maximum wattage.
+- Retains selected-port metadata in new CSV/JSON recordings and compatible older-log analysis.
+- Carries forward NVIDIA power/core/memory/hotspot monitoring, fan controls, replay and authenticated updates from the existing builds.
+- Promotes the unchanged tested 9.8.66 package. 297 automated test/subtest records passed with two optional skips; race, Windows build/vet and static/signature checks passed. Physical protection-trip testing is not claimed.
+
+## 9.8.19 — Pin colors and replay layout
 
 - Matches explicit pin labels, associated current readings, bars and maximum markers to timeline colors across Live, Top 5, replay, history and reports.
 - Preserves yellow/red warning outlines and the red current-limit line.

@@ -89,15 +89,15 @@ User-Agent. Checks do not upload recordings, PSU measurements or configuration.
 No automatic startup checks, private GitHub token, analytics or telemetry upload
 are part of the updater. SHA-256 detects corruption relative to the GitHub asset;
 it is not a substitute for publisher signing or protection against a compromised
-publishing account. This release remains unsigned.
+publishing account. Current updaters also authenticate the version and EXE digest with an Ed25519 publisher signature. The EXE remains without a Windows Authenticode certificate; the two mechanisms serve different purposes.
 
 ## PSU-only migration in v9.8.4
 
-The removed NVIDIA enable key is ignored in old config.json files and omitted on the next settings save. No GPU reader, helper or NVIDIA diagnostic log is created. Old files are not deleted. NVIDIA-specific board-power fields are ignored by current replay/report code; older generic GPU fields are offline compatibility data only.
+That historical release removed the NVIDIA reader. Since v9.8.57, optional live GPU readings again use the installed NVIDIA driver and a bounded helper process. They remain separate from PSU connector measurements and PSU incident data. No external sensor app, additional driver or sensor service is installed. Old recordings are not rewritten.
 
 ## PSU fan records
 
-The v9.8.1 fan backend retained in v9.8.3/9.8.4 uses explicit persistent Auto/Customized/Zero Fan actions. Saved settings intentionally remain active when the app closes. Select Auto to restore automatic control. Existing session recovery uses psu_fan_recovery.json; preserve it while restoration is pending. Normal startup/monitoring does not apply a new persistent profile. See PSU_FAN_CONTROL.md for the unchanged backend limitations. v9.8.2's separate save/approved record scheme is specific to that older preview, not this release.
+Current Auto, Manual static and Zero Fan operations use acknowledged/read-back persistent transactions and device-bound recovery. Preserve pending recovery files until the same PSU is restored and verified. Manual-static zero-RPM warnings require at least five seconds of fresh zero readings. Custom persistent fan curves remain removed. See [current fan-control details](PSU_FAN_CONTROL.md). Earlier version-specific notes below describe historical behavior.
 
 ## Fan curves and guard in v9.8.5
 
@@ -112,3 +112,18 @@ Live Top 5 accepts recorded peaks >0.400 A immediately. Avg uses available five-
 Live power/voltage shows +12V average/minimum/maximum in one row, efficiency immediately above PSU output, then output average/minimum/maximum. PSU temperature also has average/minimum/maximum. These are session aggregates from connected samples, separate from graph/replay storage; reset session clears them. Non-finite/out-of-range values are excluded; a valid zero counts.
 
 Temperature graph points now select held static targets by threshold, with no firmware curve upload. Normal curve stop restores the prior supported setting; fault/crash recovery attempts Auto. See PSU_FAN_CONTROL.md for exact behavior and limits.
+
+## Selected port and deviation captions in v9.8.66
+
+The psu_connector setting selects PSU port 1 or 2 for the next monitoring session.
+Its selection stays fixed through reconnects. New CSV/JSON recordings retain the
+port; older recordings without it remain unknown. Analysis rejects CSVs mixing
+recorded ports.
+
+Main Current/Avg/Max spread values retain highest-minus-lowest pin gaps. Small
+captions show current, session-average and session-maximum six-pin mean absolute
+deviation. Reset clears those aggregates. Existing CSV/JSON gap fields keep their
+meanings; source recordings are not rewritten. See [spread calculations](SPREAD_CALCULATION.md).
+
+Safeguard describes app limits and Test alarm. The Firmware alarm row displays
+the selected port's PSU status; an incomplete status reply remains unavailable.

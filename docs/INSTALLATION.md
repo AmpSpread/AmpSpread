@@ -1,20 +1,27 @@
 # Install or update AmpSpread
 
 1. Open the project's Releases page and expand **Assets**.
-2. Download **AmpSpread-v9.8.4-Windows-x64.zip**. GitHub's automatic **Source code**
+2. Download **AmpSpread-v9.8.66-Windows-x64.zip**. GitHub's automatic **Source code**
    ZIP contains this documentation repository, not the runnable application.
 3. Extract the ZIP into a folder you can write to.
 4. Close any older AmpSpread window, then run **AmpSpread.exe**.
 
-The build is for Windows x64. No installer, NVIDIA library or bundled kernel
-driver is included. AmpSpread does not load or poll a GPU driver. Live measurements require a compatible PSU's USB telemetry
-connection. Monitoring starts automatically when the application opens.
+The build is for Windows x64. No installer or bundled kernel driver is included.
+Live PSU measurements require a compatible PSU's USB telemetry connection.
+Optional NVIDIA readings use the installed GPU driver; no external monitoring
+app or sensor service is required. Monitoring starts automatically when the
+application opens. Hotspot access may require the included explicit administrator
+launcher, depending on the driver; ordinary PSU monitoring runs normally.
+
+To monitor the second PSU socket, enable **PSU 12V-2x6 port 2 (off: port 1)**
+in Settings / Tools, save settings and restart. The active session retains its
+selected port through reconnects.
 
 ## In-app updates (v9.7.5 onward)
 
 Open **Settings / Tools → Check for updates**. The update screen displays the
 GitHub changelog and the Windows x64 download size. Choose **Download update**;
-monitoring continues while the ZIP downloads and its SHA-256 checksum is checked.
+monitoring continues while the ZIP downloads and its SHA-256 checksum is checked. Current updaters also verify the package's Ed25519 signature bound to its version and EXE digest.
 
 At **Update ready to install**, choose **Restart now** or **Close**. Close only
 closes the update screen and keeps this version running. The staged update is
@@ -46,7 +53,7 @@ folder if you want an independent copy of your settings and recordings.
 Each release includes `SHA256SUMS.txt`. In PowerShell, run:
 
 ```powershell
-Get-FileHash .\AmpSpread-v9.8.4-Windows-x64.zip -Algorithm SHA256
+Get-FileHash .\AmpSpread-v9.8.66-Windows-x64.zip -Algorithm SHA256
 ```
 
 Compare the result with the release's checksum file. The EXE checksum is also
@@ -55,7 +62,7 @@ published copy; it is not a publisher identity certificate or a safety verdict.
 
 ## Windows security messages
 
-v9.8.4 is not Authenticode-signed. SmartScreen reputation warnings and Smart App
+v9.8.66 is not Authenticode-signed. SmartScreen reputation warnings and Smart App
 Control blocks are different Windows protections. A legitimate unsigned app
 can still be blocked, and a GitHub download does not bypass either system.
 If Windows blocks this build, it may not be usable under your current policy.
@@ -81,6 +88,6 @@ and [Smart App Control](https://learn.microsoft.com/en-us/windows/apps/develop/s
   vendor's total board-power reading.
 - A saved replay's selected sample may be below 0.850 A; the history cutoff
   applies to the event's peak, not every captured sample.
-- This release has no NVIDIA driver integration. Minimize the window and leave full-session recording off when it is not needed to reduce monitoring overhead.
+- Optional GPU sensors can be disabled in Settings / Tools. Missing or unsupported GPU sensors stay unavailable. Minimize the window and leave full-session recording off when it is not needed to reduce monitoring overhead.
 - Native Windows and hardware validation remain necessary; see the validation and performance notes.
 

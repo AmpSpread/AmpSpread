@@ -16,19 +16,36 @@ and recorded events in the Meridian interface.
 [Installation](docs/INSTALLATION.md) · [Changelog](CHANGELOG.md) ·
 [Report a problem](https://github.com/AmpSpread/AmpSpread/issues)
 
-## Latest: v9.8.19 — Pin colors and replay layout
+## Latest: v9.8.66 — Port 2 support and clearer balance readings
 
-Pin labels, associated amp readings, bars and maximum markers now match the six timeline colors throughout Live, Top 5, replay, history and reports. Near-limit and over-limit bar outlines still show warnings.
+Select PSU 12V-2x6 port 1 or port 2. The author has confirmed working port 2
+current readings on an Ai1600TS. In Settings / Tools, enable **PSU 12V-2x6
+port 2 (off: port 1)** for the second socket, save settings and restart.
+Port 1 remains the default; a session retains its selected port through reconnects.
 
-Replay detail rows have more room, and graph headers and axis labels no longer overlap in compact layouts. The readable sizing and 720 × 620 DIP minimum client area from v9.8.18 remain.
+Small grey **Current deviation**, **Average deviation** and **Max deviation**
+captions describe mean absolute deviation across all six pins. The main spread
+figures and Top 5 keep their highest-minus-lowest calculations. The session
+average and maximum deviation reset with the session.
 
-PSU polling, fan commands, recovery and updater behavior are unchanged. Custom fan curves and NVIDIA driver integration remain removed.
+Safeguard shows AmpSpread's software limits; the separate Firmware alarm row
+shows the PSU's selected-port status. Port 2 status mapping follows the original
+MSI plugin source, and incomplete replies remain unavailable. Card captions
+now reserve measured font height and balanced bottom spacing. The GPU connector
+footer shows only maximum wattage.
 
-Portable regression tests, pin-color and replay geometry checks, Windows vet, GUI build and static executable checks passed. Native Windows appearance, physical PSU behavior and gaming performance were not tested in the build environment.
+297 automated test/subtest records passed, with two optional skips. Windows
+vet/build, static EXE and publisher-update signature checks passed. Port 2
+current readings are author-confirmed; this does not establish a physical
+protection-trip test or compatibility with every firmware/driver.
+See [release notes](docs/RELEASE_NOTES_v9.8.66.md) and
+[build validation](docs/VALIDATION_v9.8.66.json).
 
 ## What it does
 
-- Monitor all six connector pin currents, total current and current/average/maximum spread.
+- Monitor all six connector pin currents on the selected PSU port, total current and current/average/maximum spread.
+- Compare current, session-average and session-maximum six-pin deviation in small grey captions.
+- Optionally view NVIDIA board power, core/memory temperatures and supported hotspot readings.
 - Keep the top five qualified spread events in a compact horizontal strip; click
   any listed event to replay it, regardless of spread.
 - Switch between current bars and a timeline, and between normal and compact layouts.
@@ -42,13 +59,13 @@ Portable regression tests, pin-color and replay geometry checks, Windows vet, GU
 - Configure software thresholds, hysteresis, capture windows, consecutive samples,
   sound and optional CSV recording.
 
-## PSU-only power source
+## Connector power and optional GPU telemetry
 
 `GPU connector power (W) = sum of six pin currents (A) × measured PSU +12V voltage (V)`
 
 This measures the monitored connector, excluding motherboard PCIe slot power. PSU-side voltage does not separately measure cable voltage drop. Total PSU output stays separate.
 
-AmpSpread has no NVIDIA driver loading, NVML/NVAPI calls, helper process or GPU telemetry polling. An old enabled-driver setting is ignored. Historical generic GPU fields can still be read from older files without contacting a driver; the removed NVIDIA-specific fields are ignored.
+Optional GPU telemetry uses the installed NVIDIA driver through NVML/NVAPI and a bounded helper process. GPU board power is shown separately from PSU-measured connector power. Missing sensors stay unavailable. RTX 50 hotspot access may require the included explicit administrator launcher; ordinary PSU monitoring runs as a normal user. No additional sensor service, kernel driver, HWiNFO, PawnIO or other monitoring app is required. See [GPU readings](docs/GPU_TELEMETRY.md).
 
 MSI Afterburner's GPU fan, clock and power-limit settings are outside AmpSpread's hardware path. Avoid simultaneous fan writes from MSI Center/Cooling Wizard or other software accessing the same PSU. AmpSpread does not modify case fans, GPU fans, voltage, firmware or hardware protection limits.
 
@@ -60,13 +77,13 @@ MSI Afterburner's GPU fan, clock and power-limit settings are outside AmpSpread'
 | PSU support in code | MSI MPG Ai1600TS and Ai1300TS USB HID interfaces |
 | Live connection | Compatible PSU connected through its USB telemetry interface |
 | Offline analysis | Completed supported AmpSpread CSV log; no PSU connection required |
-| GPU vendor software | None; all live telemetry is PSU-driven |
+| GPU readings | Optional supported NVIDIA GPU and installed driver; PSU monitoring works independently |
 
-Ai1600TS operation was reported by the author; Ai1300TS fan control was reported by an external tester. These reports do not certify every firmware revision or failure case. Simultaneous access to the same PSU by other software has not been validated.
+Ai1600TS operation, including 12V-2x6 port 2 readings, was reported by the author; Ai1300TS fan control was reported by an external tester. These reports do not certify every firmware revision or failure case. Simultaneous access to the same PSU by other software has not been validated.
 
 ## Resource use
 
-PSU sampling remains once per second. Minimized windows avoid live redraws and graph copies and pause replay playback. No GPU driver is polled. The five replay buffers remain bounded. See [measured scope and performance guidance](docs/PERFORMANCE.md); zero gaming impact and HWiNFO64 equivalence have not been established.
+PSU polling waits about one second between completed cycles. Optional GPU polling targets one second. Minimized windows avoid live redraws and graph copies and pause replay playback. The five replay buffers remain bounded, and deviation captions use fixed-size running aggregates. See [measured scope and performance guidance](docs/PERFORMANCE.md); zero gaming impact and HWiNFO64 equivalence have not been established.
 
 ## Live Top 5 replays
 
@@ -94,13 +111,13 @@ live Top 5 qualification and full-session CSV behavior are unchanged.
 
 ## Installation and updates
 
-Download `AmpSpread-v9.8.19-Windows-x64.zip` from the release's **Assets** list,
+Download `AmpSpread-v9.8.66-Windows-x64.zip` from the release's **Assets** list,
 extract it, close any older AmpSpread instance and run `AmpSpread.exe`.
 Monitoring starts when the app opens. Settings stay in
 `%LOCALAPPDATA%\AmpSpread`. Recordings use that folder by default, or the local
 folder selected in Settings. Existing settings and recordings are retained.
 
-This release is **unsigned**. Windows SmartScreen or Smart App Control may warn
+This EXE has **no Windows Authenticode publisher certificate**. The package's Ed25519 signature authenticates supported app updates and is a separate mechanism. Windows SmartScreen or Smart App Control may warn
 or block it. Hosting it on GitHub does not remove that restriction or certify
 the application. See [installation notes](docs/INSTALLATION.md).
 
@@ -109,7 +126,7 @@ changelog, then choose **Download update**. AmpSpread keeps monitoring during th
 download. When it is ready, choose **Restart now** to install or **Close** to keep
 using the app and install later. After restarting, the app shows the changelog
 and a link to that release. Checks happen only when requested; there is no
-background polling. Versions before v9.7.5 need one manual upgrade to the current release.
+background polling. Versions before v9.7.5 need one manual upgrade to the current release. Updaters from v9.8.50 onward also verify an Ed25519 signature bound to the version and EXE digest.
 
 From v9.7.7, Restart now checks Windows launch in the background before stopping monitoring. A blocked check leaves the current app open. This does not grant Windows trust or guarantee permission at the final install path; rollback still applies. Older updaters cannot receive this safeguard until upgraded. See [Application Control guidance](docs/INSTALLATION.md#windows-security-messages).
 
