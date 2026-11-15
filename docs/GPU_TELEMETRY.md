@@ -1,15 +1,36 @@
-# GPU readings in v9.8.66
+# NVIDIA telemetry — v9.8.78
 
-The GPU card retains current/minimum/maximum for board power, core temperature, memory junction and hotspot, with a small grey Cur / Min / Max heading. GPU polling targets one second, including fast query time. Overruns skip missed polls rather than queueing a catch-up burst. GPU metrics remain independent of PSU alarms and replay data.
+NVIDIA power, core, memory and hotspot reads run inside the app on one background
+worker. No GPU child process, service, external sensor app or elevation request
+is used. The pre-selector NVML/NVAPI implementation is restored.
 
-Board power uses NVIDIA NVML. Core uses NVML or NVIDIA thermal channels; memory junction uses NVML or the existing generation-specific thermal channel. RTX 30/40 hotspot retains its native driver queries. On RTX 50 this test uses only an internal **NvAPI_GPU_RegisterOp** reader for hotspot so comparison cannot silently come from another app.
+Core uses NVML with the original NVAPI fallback. Memory uses NVML field 82 with
+its source timestamp and the original generation-specific NVAPI fallback. RTX50
+hotspot automatically uses the six-register read-only query, with documented
+NVML hottest-die fallback. Other supported generations retain their original
+extended channels. Unknown generations never receive guessed hotspot channels.
+See HOTSPOT_READER.md for register validation. System DLLs use restricted system
+paths, and no NVIDIA write interface is loaded.
 
-No HWiNFO sharing, PawnIO, LHM or FanControl backend is present. All driver libraries load through the restricted System32 policy. No NVIDIA, HWiNFO or PawnIO binary is redistributed. The native request submits six fixed 32-bit global reads, offsets 0xAD0A90 through 0xAD0AA4, with no write masks. Request/response structure, metadata, operation statuses, raw width, validity, sign and plausible temperature are checked. A partially failed transaction is not reported as a complete maximum.
+GPU updates use the saved 1000–10000 ms target (default 1000 ms). Unsupported optional queries are cached for the
+reader lifetime; transient failures retry after 30 seconds. Missing, invalid or
+stale values never become zero temperatures or another sensor's reading.
 
-The uploaded HWiNFO 8.53-6080 executable checks bit 30, uses sign bit 16, converts bits 3..15 at 1/32 degree per step and takes the highest valid channel. This implementation mirrors that interpretation and displayed quantization. No calibrated physical-sensor accuracy or future-driver stability is implied. Missing values remain unavailable. The source line includes **NVAPI hotspot** when successful.
+Normal access uses the app's existing token. No automatic UAC prompt is issued.
+Removing the admin button cannot overcome driver access restrictions. Denied
+sensors stay unavailable; GPU tools reports query details. Multiple NVIDIA GPUs
+remain unsupported automatically, preventing cross-card readings.
 
-This NVIDIA API is undocumented. A normal launch does not request elevation. On drivers that deny register access, a real error code appears and the existing explicit administrator launcher can be used for comparison. Nothing installs a driver or service. The sensor helper inherits the main process's token; per-helper elevation is not implemented in this test.
+One worker owns serialized native queries and teardown. Poll cancellation returns
+to the controller without unloading active native code. A replacement waits for
+that reader's cleanup. A driver call that never returns can hold the reader
+until process exit. A native fault now affects the app because process isolation
+was removed as requested. PSU work and UI do not wait on normal driver queries.
 
-The existing helper process runs below normal priority, serializes requests, is bounded by the three-second poll timeout and closes with the parent. It does not mutate GPU settings. Unsupported multi-GPU configurations remain refused. Four fixed-size session aggregates retain min/max and reset through the accepted session reset. No extra rendering timer or per-sample file write is added.
+Diagnostics measures the single app process, including GPU work. No separate
+helper counters are needed. See PERFORMANCE_MONITOR.md. Real Windows and physical
+NVIDIA behavior were not executed in the build environment.
 
-See HOTSPOT_READER.md for implementation facts. The 9.8.57 release records the author's RTX 5090/driver 617.42 comparison with HWiNFO. That report does not certify every GPU, driver or firmware. Native GPU testing was not performed in the build environment.
+Polling changes re-arm the current worker timer without reopening native libraries
+or resetting extrema. Display lifetime follows the configured cadence while
+original timestamps remain intact. See STARTUP_AND_GPU_POLLING.md.

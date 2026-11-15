@@ -1,0 +1,146 @@
+{
+  "version": "9.8.78",
+  "go_toolchain": "go1.27.3",
+  "update_signature_public_key": "fad8375798509edfa4eca1600c72a94f7ca58cecda0cc84914f9c3b7954f28f0",
+  "system_dll_policy": "absolute system paths and LOAD_LIBRARY_SEARCH_SYSTEM32 (source verified)",
+  "file": "AmpSpread.exe",
+  "size_bytes": 9032192,
+  "sha256": "31aac500b747705cba00dcfcd6b56c7f959c86982e73a6f06bdfaba67218b3ab",
+  "architecture": "windows/amd64",
+  "static_import_dlls": [
+    "kernel32.dll"
+  ],
+  "authenticode_present": false,
+  "renderer_injection_entrypoint_scan": "passed (static inspection)",
+  "subsystem": "Windows GUI",
+  "manifest_version": "9.8.78.0",
+  "execution_level": "asInvoker",
+  "icons_present": true,
+  "icons_match_source": true,
+  "runtime_icon_resource_id": 2,
+  "icon_variants": 10,
+  "nvidia_entry_points": [
+    "nvapi_QueryInterface",
+    "nvmlDeviceGetCount_v2",
+    "nvmlDeviceGetFieldValues",
+    "nvmlDeviceGetHandleByIndex_v2",
+    "nvmlDeviceGetName",
+    "nvmlDeviceGetPciInfo_v3",
+    "nvmlDeviceGetPowerUsage",
+    "nvmlDeviceGetTemperature",
+    "nvmlDeviceGetTemperatureV",
+    "nvmlInit_v2",
+    "nvmlShutdown"
+  ],
+  "gpu_read_only_interface_checks": "passed (static inspection)",
+  "hotspot_backend": "six fixed read-only RTX 50 registers enabled automatically; documented NVML hottest-die fallback",
+  "nvapi_register_interface_id": "0x2EB3C140",
+  "external_sensor_backends": "absent",
+  "hotspot_administrator_access": "asInvoker; no GPU elevation or child process; driver access depends on app token",
+  "gpu_startup_handshake": "in-process background worker",
+  "gpu_shutdown": "native cleanup after last query; no forced in-process thread termination",
+  "hardware_validation": "not performed",
+  "baseline_executable_sha256": "35fc2ded6051022b15f42fde7d95886e546036c86834499954930cd9cee137b0",
+  "baseline_version": "9.8.77",
+  "baseline_is_previous_delivered_build": true,
+  "portable_race_tests": {
+    "top_level_passes": 280,
+    "passes_including_subtests": 425,
+    "skipped_in_full_suite": [
+      "TestActualReleasePublisherAuthentication",
+      "TestUpdatePublishedReleaseDownload"
+    ],
+    "elapsed_seconds": 145.443,
+    "race_detector_enabled": true
+  },
+  "linux_vet_passed": true,
+  "windows_cross_vet_passed": true,
+  "windows_vet_flags": [
+    "-unsafeptr=false"
+  ],
+  "windows_tests_compiled_not_run": true,
+  "windows_runtime_tested": false,
+  "physical_psu_or_gpu_tested": false,
+  "github_published": false,
+  "update_publisher_signature_verified": true,
+  "legacy_rtx50_hotspot_enabled_automatically": true,
+  "psu_fan_protocol_changed": false,
+  "psu_polling_range_ms": [
+    100,
+    1000
+  ],
+  "gpu_poll_target_ms": 1000,
+  "gpu_polling_range_ms": [
+    1000,
+    10000
+  ],
+  "gpu_polling_rearms_without_reader_restart": true,
+  "windows_startup": {
+    "default_enabled": false,
+    "scope": "current user Run value AmpSpread",
+    "native_login_tested": false,
+    "save_failure_rolls_back_startup": true
+  },
+  "memory_validation": {
+    "scope": "Portable simulated workload; excludes native Windows/NVIDIA allocations",
+    "steady_state_checkpoints": [
+      "memory_lifecycle_audit_test.go:141: samples=100000 retained-Go-heap=501808 ring=66/67 graph=600/600 live-replays=0",
+      "memory_lifecycle_audit_test.go:141: samples=200000 retained-Go-heap=502096 ring=66/67 graph=600/600 live-replays=0",
+      "memory_lifecycle_audit_test.go:141: samples=300000 retained-Go-heap=502096 ring=66/67 graph=600/600 live-replays=0",
+      "memory_lifecycle_audit_test.go:141: samples=400000 retained-Go-heap=502224 ring=66/67 graph=600/600 live-replays=0",
+      "memory_lifecycle_audit_test.go:141: samples=500000 retained-Go-heap=502224 ring=66/67 graph=600/600 live-replays=0",
+      "memory_lifecycle_audit_test.go:141: samples=600000 retained-Go-heap=502256 ring=66/67 graph=600/600 live-replays=0"
+    ],
+    "fast_polling_checkpoints": [
+      "psu_polling_test.go:345: 100ms samples=100000 heap=1111544 retained-ring-graph=667840 ring=651/670 graph=6000/6000",
+      "psu_polling_test.go:345: 100ms samples=200000 heap=1111816 retained-ring-graph=667840 ring=651/670 graph=6000/6000",
+      "psu_polling_test.go:345: 100ms samples=300000 heap=1113384 retained-ring-graph=667840 ring=651/670 graph=6000/6000",
+      "psu_polling_test.go:345: 100ms samples=400000 heap=1113944 retained-ring-graph=667840 ring=651/670 graph=6000/6000"
+    ],
+    "native_leak_fixed_claim": false
+  },
+  "timeline_optimizations_retained_from": "9.8.74",
+  "whole_app_cpu_or_fps_measured": false,
+  "resource_monitor": {
+    "interval_seconds": 5,
+    "processes": [
+      "main_including_gpu_reading"
+    ],
+    "csv_logging_opt_in": true,
+    "maximum_files": 4,
+    "maximum_bytes_per_file": 8388608,
+    "native_windows_counters_tested": false,
+    "real_windows_soak_performed": false,
+    "portable_math_rotation_lifecycle_tests": "passed with race detector"
+  },
+  "multi_gpu": {
+    "selector_removed": true,
+    "saved_selection_removed": true,
+    "automatic_single_gpu_only": true
+  },
+  "windows_code_signing": {
+    "workflow": "Sign-WindowsRelease.ps1",
+    "prepared": true,
+    "reviewed": true,
+    "powershell_executed": false,
+    "authenticode_applied": false,
+    "blocked_by": "Windows and authorized verified publisher certificate/profile unavailable",
+    "updater_signature_is_separate": true
+  },
+  "gpu_execution": {
+    "mode": "in-process serialized background worker",
+    "child_process": false,
+    "uac_request": false,
+    "automatic_original_sensor_path": true,
+    "native_driver_crash_isolated": false,
+    "native_calls_forcibly_terminated": false,
+    "permission_free_hotspot_verified": false
+  },
+  "packaged_release_authentication_and_tamper_tests": "passed with race detector",
+  "public_release_packaging": {
+    "exe_unchanged_from_test_build": true,
+    "public_docs_updated": true,
+    "publication_state": "prepared",
+    "original_test_zip_sha256": "353ec2d62adbc83599f68c7972d44a6f1d798cb1958eadc45f1b439e9694b19c"
+  }
+}

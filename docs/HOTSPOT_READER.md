@@ -1,15 +1,35 @@
-# Internal NVIDIA hotspot protocol
+# v9.8.77 execution change
 
-Independently implemented Go reader; no proprietary sensor engine or copied monitor code is linked. Protocol facts were checked against the supplied HWiNFO 8.53-6080 EXE (SHA256 8bd5c9a56f5e368394c08f5ab1068b54bedb080377798bf0077ac73aebd32761) and LACT's published NVIDIA register ABI.
+The original fixed read-only query documented below now runs automatically on a
+worker inside AmpSpread. There is no GPU helper, admin-reader action or GPU UAC
+request. Previous helper/elevation references below describe historical builds.
+Driver permissions still apply; normal-token hotspot is not guaranteed.
 
-- Interface: NvAPI_GPU_RegisterOp, query ID 0x2EB3C140.
-- Request: version 0x11808; count 6; capacity 256 operations; 6152-byte C-compatible structure.
-- Operation: 24 bytes; uint16 flags/status; uint32 offset; uint64 write mask/value.
-- Flags: 0x15 = read, 32-bit, global; write mask always zero.
-- Fixed offsets: AD0A90, AD0A94, AD0A98, AD0A9C, AD0AA0, AD0AA4.
-- Fresh result: all six operation calls must succeed; only valid positive channels enter the maximum.
-- HWiNFO interpretation: validity bit 30; sign bit 16; ((raw >> 3) & 0x1FFF) / 32.0; highest valid channel.
+# Restored RTX 50 hotspot reader — v9.8.75
 
-The register method runs only for matched RTX 50 GPU handles. No arbitrary offset/configuration is accepted from UI, files or helper input. A refused request stays unavailable and its code is displayed. The API's ability to perform other operations does not expand the requests submitted by AmpSpread.
+The old reader is enabled automatically for RTX 50 cards again. The v9.8.74
+experimental setting is ignored on migration and no longer saved. This reader's
+valid sub-degree result is preferred; documented NVML hottest-die is a fallback.
 
-Sources: https://github.com/ilya-zlobintsev/LACT/blob/master/lact-daemon/src/server/gpu_controller/nvidia/nvapi.rs ; https://github.com/namazso/PawnIO.Modules/blob/52a7e536dff3e53c96917a28caac5e0fa6510696/Nvidia.p ; https://www.igorslab.de/en/blackwell-hotspot-ibhe-estimation-register-findings-download-nvidia-question/2/ . The API is undocumented and native hardware verification is pending.
+NvAPI_GPU_RegisterOp (interface 0x2EB3C140) is resolved only for RTX 50. Each
+request contains six fixed 32-bit global reads at 0xAD0A90 through 0xAD0AA4,
+flags 0x15, and zero write masks. No caller-selected address or operation enters
+the driver. The underlying API can write registers; this fixed request does not.
+
+Structure version/count, flags, offsets, zero write masks, per-operation status
+and 32-bit width are validated. Partial transactions never produce a maximum.
+The decoder retains valid bit 30, sign bit 16, bits 3..15 scaled by 1/32 degree C,
+a plausible range and the highest valid channel. That is the old protocol
+interpretation, not a new hardware calibration claim.
+
+Temporary API failures and correctly shaped incomplete/empty readings retry at
+30 seconds. Unsupported/version failures wait for a reader restart. Unexpected
+structure/register metadata fails closed until a manual retry. GPU tools > Retry
+reopens normal access; the separate admin GPU reader action can explicitly retry
+with UAC approval for only the child process. Generic errors do not prove that
+elevation helps, and a driver can reject access at either privilege level.
+
+Native calls remain isolated in the timed helper. The API is undocumented and
+future driver compatibility is unproven. No new hardware support is inferred
+from compilation. No HWiNFO/PawnIO/LHM backend, service, kernel driver or generic
+register interface is distributed. Windows/RTX 5090 testing is still needed.

@@ -1,13 +1,19 @@
-# Performance scope — v9.8.66
+# v9.8.77 single-process diagnostics
 
-- PSU polling waits about one second between completed cycles. Optional GPU telemetry targets one second and skips missed polls after overruns.
-- Minimized windows avoid live redraws and graph copies and pause replay playback.
-- Current, average and maximum six-pin deviations update from existing PSU samples using fixed-size running values. They add no sensor queries or growing history buffer.
-- Live fan RPM reuses existing telemetry. Fan configuration inspection is limited to the relevant controls; dragging the static slider changes local UI until its target is committed.
-- Top 5 replay buffers remain bounded. Replay graphs cache static content, and live traces batch the measured pin points.
-- Full-session logging is optional and uses buffered writes. Update checks and downloads occur only on request.
-- GPU telemetry uses the installed NVIDIA driver and a bounded helper. No additional sensor service or kernel driver is installed.
+GPU readings now execute inside AmpSpread. Diagnostics and performance CSVs
+measure this single process, including NVIDIA user-mode allocations and CPU.
+Do not compare the v9.8.76 main process alone with this combined process; that
+older build reported the GPU helper separately. Removing a process does not
+establish lower total CPU or memory usage. No measured reduction is claimed.
 
-Automated component tests and static checks do not establish whole-app Windows
-CPU/RAM use, gaming frame-time impact or equivalence to HWiNFO. Compare the same
-workload with the app closed and minimized before making performance claims.
+Five-second sampling, constant-size aggregates, one log writer and four 8 MiB
+CSV caps remain. Tests exercise cancellation, native cleanup lifetime and log
+bounds. Windows driver allocations and a real long-session soak are unmeasured.
+See VALIDATION_v9.8.77.json and PERFORMANCE_MONITOR.md.
+
+## v9.8.78
+
+The GPU timer supports 1–10 seconds and reuses its worker, timer and fixed-size
+rate-change notification. Rate changes preserve statistics and do not queue
+catch-up reads. Windows startup does no work in the polling loop. These changes
+have not been benchmarked for a whole-app CPU reduction.

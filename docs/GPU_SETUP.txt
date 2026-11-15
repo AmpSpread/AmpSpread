@@ -1,0 +1,15 @@
+AmpSpread v9.8.78 GPU readings
+
+Launch AmpSpread normally and start monitoring. Core, memory and hotspot reads
+start automatically inside AmpSpread using the original NVIDIA sensor path.
+There is no GPU selector, GPU helper process, service or Admin GPU reader button.
+GPU polling is selectable from 1000 to 10000 ms in Settings / Tools; default 1000 ms. GPU tools shows status and offers Retry.
+
+The old RTX 50 hotspot reader is enabled automatically. Public NVML hottest-die
+is a fallback. Driver sensor support and permissions still apply; the app cannot
+guarantee hotspot at standard privilege when NVIDIA denies the query. No UAC
+prompt is issued automatically. Unsupported or denied values stay unavailable.
+
+Only a single NVIDIA GPU is supported automatically in this revision. Ambiguous
+multiple-card configurations fail rather than mix readings from different cards.
+Native Windows / RTX 5090 behavior needs PC testing.

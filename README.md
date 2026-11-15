@@ -16,37 +16,31 @@ and recorded events in the Meridian interface.
 [Installation](docs/INSTALLATION.md) · [Changelog](CHANGELOG.md) ·
 [Report a problem](https://github.com/AmpSpread/AmpSpread/issues)
 
-## Latest: v9.8.66 — Port 2 support and clearer balance readings
+## Latest: v9.8.78 — Startup, GPU polling and diagnostics
 
-Select PSU 12V-2x6 port 1 or port 2. The author has confirmed working port 2
-current readings on an Ai1600TS. In Settings / Tools, enable **PSU 12V-2x6
-port 2 (off: port 1)** for the second socket, save settings and restart.
-Port 1 remains the default; a session retains its selected port through reconnects.
+New since v9.8.73: Windows sign-in startup, independent 1000–10000 ms GPU polling,
+process resource diagnostics and bounded performance CSVs, more efficient timeline
+drawing, and improved NVIDIA recovery. GPU readings run inside AmpSpread, with
+no GPU helper process or admin-reader button. The original automatic RTX 50
+hotspot path remains with a public NVIDIA fallback; driver permissions still apply.
 
-Small grey **Current deviation**, **Average deviation** and **Max deviation**
-captions describe mean absolute deviation across all six pins. The main spread
-figures and Top 5 keep their highest-minus-lowest calculations. The session
-average and maximum deviation reset with the session.
+Save Settings to apply polling or startup changes. PSU pin sampling stays at
+100–1000 ms; other PSU readings keep their one-second target. Spread formulas,
+alarms, fan controls and Top 5/replay behavior are retained. Proposed Top 5 and
+aggressive optimization ideas are not included in this release.
 
-Safeguard shows AmpSpread's software limits; the separate Firmware alarm row
-shows the PSU's selected-port status. Port 2 status mapping follows the original
-MSI plugin source, and incomplete replies remain unavailable. Card captions
-now reserve measured font height and balanced bottom spacing. The GPU connector
-footer shows only maximum wattage.
-
-297 automated test/subtest records passed, with two optional skips. Windows
-vet/build, static EXE and publisher-update signature checks passed. Port 2
-current readings are author-confirmed; this does not establish a physical
-protection-trip test or compatibility with every firmware/driver.
-See [release notes](docs/RELEASE_NOTES_v9.8.66.md) and
-[build validation](docs/VALIDATION_v9.8.66.json).
+280 portable tests passed with race detection (425 including subtests). Windows
+build/vet and packaged update authentication/tamper checks passed. Native Windows
+startup/login, GUI and physical hardware verification remain outstanding.
+See [all changes since v9.8.73](docs/RELEASE_NOTES_v9.8.78.md) and
+[build validation](docs/VALIDATION_v9.8.78.json).
 
 ## What it does
 
 - Monitor all six connector pin currents on the selected PSU port, total current and current/average/maximum spread.
 - Compare current, session-average and session-maximum six-pin deviation in small grey captions.
 - Optionally view NVIDIA board power, core/memory temperatures and supported hotspot readings.
-- Keep the top five qualified spread events in a compact horizontal strip; click
+- Keep the top five qualified spread events in a compact event list; click
   any listed event to replay it, regardless of spread.
 - Switch between current bars and a timeline, and between normal and compact layouts.
 - View PSU output, measured voltage and voltage statistics, efficiency, rail currents,
@@ -65,7 +59,14 @@ See [release notes](docs/RELEASE_NOTES_v9.8.66.md) and
 
 This measures the monitored connector, excluding motherboard PCIe slot power. PSU-side voltage does not separately measure cable voltage drop. Total PSU output stays separate.
 
-Optional GPU telemetry uses the installed NVIDIA driver through NVML/NVAPI and a bounded helper process. GPU board power is shown separately from PSU-measured connector power. Missing sensors stay unavailable. RTX 50 hotspot access may require the included explicit administrator launcher; ordinary PSU monitoring runs as a normal user. No additional sensor service, kernel driver, HWiNFO, PawnIO or other monitoring app is required. See [GPU readings](docs/GPU_TELEMETRY.md).
+Optional GPU telemetry uses the installed NVIDIA driver through NVML/NVAPI on a
+serialized worker inside AmpSpread. GPU board power is separate from PSU-measured
+connector power. Missing sensors stay unavailable. The original automatic RTX 50
+hotspot reader has a public hottest-die fallback; driver support and permissions
+still apply. No admin-reader button, GPU helper process, extra sensor service or
+kernel driver is used. A native NVIDIA fault can affect the app, and a permanently
+stuck native call can hold its GPU worker until app exit. See
+[GPU readings](docs/GPU_TELEMETRY.md).
 
 MSI Afterburner's GPU fan, clock and power-limit settings are outside AmpSpread's hardware path. Avoid simultaneous fan writes from MSI Center/Cooling Wizard or other software accessing the same PSU. AmpSpread does not modify case fans, GPU fans, voltage, firmware or hardware protection limits.
 
@@ -83,7 +84,17 @@ Ai1600TS operation, including 12V-2x6 port 2 readings, was reported by the autho
 
 ## Resource use
 
-PSU polling waits about one second between completed cycles. Optional GPU polling targets one second. Minimized windows avoid live redraws and graph copies and pause replay playback. The five replay buffers remain bounded, and deviation captions use fixed-size running aggregates. See [measured scope and performance guidance](docs/PERFORMANCE.md); zero gaming impact and HWiNFO64 equivalence have not been established.
+PSU pin sampling is selectable from 100–1000 ms. Other PSU readings target one
+second. GPU polling is independently selectable from 1000–10000 ms (default
+1000 ms). Diagnostics samples process resources every five seconds, with optional
+logs capped at four 8 MiB files. Minimized windows avoid live redraws and graph
+copies. See [performance guidance](docs/PERFORMANCE.md); no gaming FPS gain or
+native leak repair is promised.
+
+Enable **Open AmpSpread when I sign in to Windows** in Settings / Tools and save
+to register the current portable EXE for your Windows user. Off by default.
+Uncheck/save to remove it; moving the EXE requires saving from the new location.
+See [startup and GPU polling](docs/STARTUP_AND_GPU_POLLING.md).
 
 ## Live Top 5 replays
 
@@ -93,7 +104,7 @@ memory cache while that event remains in the Top 5. A larger replacement release
 the old replay; if it is open, the app returns to Live and clears that view too.
 Resetting or starting a new session also clears the cache.
 
-The cache holds at most five captures with at most 600 samples each. Long events
+The cache holds at most five captures with at most 600 samples each at 1000 ms or 6000 at 100 ms. Long events
 keep start, peak and recent windows, with omitted sections identified in replay.
 A peak above 0.4 A qualifies even if brief. Each card shows the peak, its high/low
 pins, and a separate average with analyzed duration. The average uses up to five
@@ -111,7 +122,7 @@ live Top 5 qualification and full-session CSV behavior are unchanged.
 
 ## Installation and updates
 
-Download `AmpSpread-v9.8.66-Windows-x64.zip` from the release's **Assets** list,
+Download `AmpSpread-v9.8.78-Windows-x64.zip` from the release's **Assets** list,
 extract it, close any older AmpSpread instance and run `AmpSpread.exe`.
 Monitoring starts when the app opens. Settings stay in
 `%LOCALAPPDATA%\AmpSpread`. Recordings use that folder by default, or the local
@@ -139,7 +150,7 @@ in those folders even when hidden in the history list. See [storage details](doc
 ## Before relying on a reading
 
 AmpSpread is a monitoring tool, not a certified hardware protection system.
-Its one-second sampling cannot capture every brief electrical transient.
+Periodic sampling cannot capture every brief electrical transient.
 Automated tests and static build checks do not replace Windows and connected
 hardware testing. See [validation](https://github.com/AmpSpread/AmpSpread/releases/latest).
 
